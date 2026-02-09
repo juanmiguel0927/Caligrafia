@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Entrenador Caligrafía v36</title>
+    <title>Entrenador De Caligrafía</title>
     
     <!-- FUENTES -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
@@ -231,9 +231,27 @@
             <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-4">
                 
                 <!-- Encabezado -->
-                <div class="flex gap-2">
+                <div class="flex justify-between items-center text-[10px] border-b border-gray-700 pb-2">
+                    <label class="flex items-center text-gray-400 font-bold"><input type="checkbox" id="toggleHeader" checked onchange="render()" class="accent-blue-500 mr-1"> Encabezado</label>
+                    <label class="flex items-center text-gray-400 font-bold"><input type="checkbox" id="toggleGrayscale" onchange="render()" class="accent-gray-500 mr-1"> B&N</label>
+                </div>
+
+                <div class="grid grid-cols-3 gap-1 text-[10px]">
+                    <label class="flex items-center cursor-pointer"><input type="radio" name="practiceMode" value="simple" checked onchange="render()" class="accent-blue-500 mr-1"> Simple</label>
+                    <label class="flex items-center cursor-pointer"><input type="radio" name="practiceMode" value="plana" onchange="render()" class="accent-blue-500 mr-1"> Alterno</label>
+                    <label class="flex items-center cursor-pointer"><input type="radio" name="practiceMode" value="progressive" onchange="render()" class="accent-blue-500 mr-1"> Progresivo</label>
+                </div>
+                
+                <div id="headerInputs" class="flex gap-2">
                     <input type="text" id="schoolName" placeholder="Colegio" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
-                    <input type="text" id="studentName" placeholder="Alumno" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
+                    <input type="text" id="studentName" placeholder="Nombre" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
+                </div>
+
+                <div class="flex gap-2 justify-center pt-2 border-t border-gray-700">
+                    <button onclick="setColor('black')" class="w-5 h-5 rounded-full bg-black border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('#2563eb')" class="w-5 h-5 rounded-full bg-blue-600 border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('#dc2626')" class="w-5 h-5 rounded-full bg-red-600 border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('rainbow')" class="w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-red-500 border border-gray-500 ring-1 ring-white/20" title="Alternar"></button>
                 </div>
 
                 <!-- Sliders -->
@@ -291,7 +309,7 @@
                     <div id="headerContainer" class="flex flex-col items-center border-b-2 border-gray-800 pb-2 mb-0 h-[25mm] justify-end flex-shrink-0 w-full">
                         <h1 id="headerTitleDisplay" class="text-xl font-bold text-gray-800 uppercase tracking-wide font-sans w-full text-center">Caligrafía</h1>
                         <div class="w-full flex justify-between text-sm text-gray-500 mt-1 font-mono">
-                            <span id="studentNameDisplay">Alumno: _________________</span>
+                            <span id="studentNameDisplay">_________________</span>
                             <span>Fecha: _______</span>
                         </div>
                     </div>
@@ -395,6 +413,12 @@
             'gladiadores': { name: "Entrada Gladiadores", link: "https://www.youtube.com/watch?v=_B0CyOAO8y0", patterns: ['{{ESPIRAL}}', '{{OLAS}}', '{{ESPIRAL}}', '{{OLAS}}'] }
         };
 
+        let selectedColor = '#000000'; 
+        let maxLinesDynamic = 13;
+        let audioCtx = null;
+        let metronomeInterval = null;
+        let isMetronomeOn = false;
+
         // Generar botones manuales
         const manualContainer = document.getElementById('manualControls');
         const groups = [
@@ -417,7 +441,7 @@
             manualContainer.innerHTML += html;
         });
 
-        // REFERENCIAS DOM
+        // REFERENCIAS
         const els = {
             input: document.getElementById('inputText'),
             container: document.getElementById('linesContainer'),
@@ -439,16 +463,16 @@
             youtubeContainer: document.getElementById('youtubeContainer'),
             youtubeLink: document.getElementById('youtubeLink'),
             bpmInput: document.getElementById('bpmInput'),
-            metroBtn: document.getElementById('metroBtn')
+            metroBtn: document.getElementById('metroBtn'),
+            checkHeader: document.getElementById('toggleHeader'),
+            headerContainer: document.getElementById('headerContainer'),
+            headerInputs: document.getElementById('headerInputs'),
+            checkGrayscale: document.getElementById('toggleGrayscale')
         };
-        
-        let audioCtx = null;
-        let isMetronomeOn = false;
-        let metronomeInterval = null;
 
         // RENDERIZADO
         function render() {
-            // Variables Elásticas
+            // Variables CSS Elásticas
             const rowHeight = els.size.value + 'px';
             const fontSize = (els.size.value * 0.66) + 'px';
             const strokeWidth = els.weight.value + 'px';
@@ -458,79 +482,143 @@
             document.documentElement.style.setProperty('--font-s', fontSize);
             document.documentElement.style.setProperty('--stroke-w', strokeWidth);
 
-            // Feedback UI
+            // Feedback UI (Puntos Word aproximados: 1px = 0.75pt)
             const pt = Math.round(els.size.value * 0.75);
             els.sizeVal.textContent = `${els.size.value}px (≈${pt}pt)`;
             els.weightVal.textContent = els.weight.value + 'px';
             els.opacityVal.textContent = els.opacity.value + '%';
             
-            els.headerTitle.textContent = els.schoolInput.value || "Caligrafía";
-            els.studentName.textContent = els.studentInput.value ? `Alumno: ${els.studentInput.value}` : "Alumno: _________________";
+            // Header
+            const showHeader = els.checkHeader.checked;
+            if (showHeader) {
+                els.headerContainer.style.height = '25mm';
+                els.headerContainer.style.opacity = '1';
+                els.headerContainer.style.marginBottom = '0';
+                els.headerTitle.textContent = els.schoolInput.value || "Caligrafía";
+                els.studentName.textContent = els.studentInput.value ? `${els.studentInput.value}` : "_________________";
+                els.headerInputs.classList.remove('opacity-50', 'pointer-events-none');
+                maxLinesDynamic = 13; 
+            } else {
+                els.headerContainer.style.height = '0';
+                els.headerContainer.style.opacity = '0';
+                els.headerContainer.style.marginBottom = '0';
+                els.headerInputs.classList.add('opacity-50', 'pointer-events-none');
+                maxLinesDynamic = 15; 
+            }
+
+            // Hoja
+            const isGrayscale = els.checkGrayscale.checked;
+            document.getElementById('sheet').className = `sheet shadow-2xl origin-top ${els.paper.value} ${isGrayscale ? 'grayscale-mode' : ''}`;
 
             els.container.innerHTML = '';
             const lines = els.input.value.split('\n');
             const paperClass = els.paper.value;
             const fontClass = els.font.value;
 
-            // Contador Líneas
             const maxLines = Math.floor(850 / parseInt(els.size.value));
             els.lineCounter.textContent = `${lines.length} / ${maxLines}`;
             
-            lines.forEach(line => {
+            lines.forEach((line, index) => {
                 const trimmed = line.trim();
-                if(!trimmed && lines.length > 1 && line === lines[lines.length-1]) return;
+                if(!trimmed && lines.length > 1 && index === lines.length-1) return;
 
                 const div = document.createElement('div');
                 div.className = `dynamic-row ${paperClass}`;
+                
+                // Color Logic
+                let effectiveColor = selectedColor;
+                const finalColor = isGrayscale ? '#000000' : (selectedColor === 'rainbow' ? ['#000000', '#2563eb', '#dc2626'][index % 3] : selectedColor);
 
                 if (svgPaths[trimmed]) {
-                    // Gráfico SVG
                     const svgRow = document.createElement('div');
                     svgRow.className = 'row-svg';
-                    const content = `<svg viewBox="0 0 40 60" preserveAspectRatio="none" style="height:100%; width:auto; stroke:black; stroke-width:${els.weight.value}; fill:none; opacity:${opacity}; display:block;">${svgPaths[trimmed]}</svg>`;
+                    const content = `<svg viewBox="0 0 40 60" preserveAspectRatio="none" style="height:100%; width:auto; stroke:${finalColor}; stroke-width:${els.weight.value}; fill:none; opacity:${opacity}; display:block;">${svgPaths[trimmed]}</svg>`;
                     let html = '';
-                    for(let k=0; k<25; k++) html += content; // Llenar ancho
+                    for(let k=0; k<25; k++) html += content;
                     svgRow.innerHTML = html;
                     div.appendChild(svgRow);
 
                 } else if (trimmed === '') {
                     div.innerHTML = '&nbsp;';
                 } else {
-                    // Texto
                     const span = document.createElement('span');
                     span.className = `row-text ${fontClass}`;
                     span.textContent = line;
                     span.style.opacity = opacity;
-                    span.style.color = 'black';
+                    span.style.color = finalColor;
                     div.appendChild(span);
                 }
                 els.container.appendChild(div);
             });
         }
 
-        // --- FUNCIONES LÓGICAS ---
+        function downloadPDF() {
+            els.modal.style.display = 'flex';
+            const element = document.getElementById('sheet');
+            const opt = {
+                margin: 0,
+                filename: `Caligrafia_${els.studentInput.value || 'Hoja'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            setTimeout(() => {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    els.modal.style.display = 'none';
+                });
+            }, 100);
+        }
+
+        function fillPage(type) {
+            const max = Math.floor(850 / parseInt(els.size.value));
+            let content = "";
+            let list = categories[type];
+            for(let i=0; i<max; i++) {
+                content += list[i % list.length] + (i < max-1 ? '\n' : '');
+            }
+            els.input.value = content;
+            render();
+            if(window.innerWidth < 768) switchTab('preview');
+        }
+
+        function fillRemaining() {
+            const current = els.input.value.split('\n').length;
+            const max = Math.floor(850 / parseInt(els.size.value));
+            const needed = max - current;
+            if(needed <= 0) return alert("Hoja llena");
+            for(let i=0; i<needed; i++) els.input.value += '\n{{OLAS}}';
+            render();
+        }
+
+        function addGraphic(tag) { els.input.value += (els.input.value ? '\n' : '') + tag; render(); }
+        function resetAll() { 
+            els.input.value = ''; 
+            els.youtubeContainer.classList.add('hidden');
+            render(); 
+        }
+        function setColor(c) { selectedColor = c; render(); }
         
+        function switchTab(t) {
+            const conf = document.getElementById('panelConfig');
+            const prev = document.getElementById('panelPreview');
+            if(t === 'config') { conf.classList.remove('hidden'); prev.classList.add('hidden'); prev.classList.remove('flex'); }
+            else { conf.classList.add('hidden'); prev.classList.remove('hidden'); prev.classList.add('flex'); }
+        }
+
         function loadSong() {
             const songKey = els.songSelect.value;
             if (!songKey) return;
             const song = musicRep[songKey];
-            
-            // Auto-Fill
             els.schoolInput.value = "Dibujo Rítmico";
             els.studentInput.value = song.name;
-            
-            // Llenar hoja con patrones de la canción
-            const maxLines = Math.floor(850 / parseInt(els.size.value));
+            const max = Math.floor(850 / parseInt(els.size.value));
             let content = "";
-            for(let i=0; i<maxLines; i++) {
-                content += song.patterns[i % song.patterns.length] + (i < maxLines-1 ? '\n' : '');
+            for(let i=0; i<max; i++) {
+                content += song.patterns[i % song.patterns.length] + (i < max-1 ? '\n' : '');
             }
             els.input.value = content;
-            
-            // Mostrar enlace
             els.youtubeContainer.classList.remove('hidden');
             els.youtubeLink.href = song.link;
-            
             render();
             if(window.innerWidth < 768) switchTab('preview');
         }
@@ -565,49 +653,19 @@
             osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        function downloadPDF() {
-            els.modal.style.display = 'flex';
-            const element = document.getElementById('sheet');
-            const opt = {
-                margin: 0,
-                filename: `Caligrafia_${els.studentInput.value || 'Hoja'}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            setTimeout(() => {
-                html2pdf().set(opt).from(element).save().then(() => {
-                    els.modal.style.display = 'none';
-                });
-            }, 100);
+        // Save/Load
+        function exportLesson() {
+            const data = els.input.value;
+            const blob = new Blob([data], {type: 'text/plain'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'leccion.txt'; a.click();
         }
-
-        function fillPage(type) {
-            const max = Math.floor(850 / parseInt(els.size.value));
-            let content = "";
-            let list = categories[type];
-            for(let i=0; i<max; i++) {
-                content += list[i % list.length] + (i < max-1 ? '\n' : '');
-            }
-            els.input.value = content;
-            render();
-            if(window.innerWidth < 768) switchTab('preview');
-        }
-
-        function addGraphic(tag) { els.input.value += (els.input.value ? '\n' : '') + tag; render(); }
-        function resetAll() { 
-            els.input.value = ''; 
-            els.youtubeContainer.classList.add('hidden');
-            render(); 
-        }
-        function exportLesson() { /* ... */ }
-        function importLesson(inp) { /* ... */ }
-
-        function switchTab(t) {
-            const conf = document.getElementById('panelConfig');
-            const prev = document.getElementById('panelPreview');
-            if(t === 'config') { conf.classList.remove('hidden'); prev.classList.add('hidden'); prev.classList.remove('flex'); }
-            else { conf.classList.add('hidden'); prev.classList.remove('hidden'); prev.classList.add('flex'); }
+        function importLesson(inp) {
+            const file = inp.files[0];
+            if(!file) return;
+            const r = new FileReader();
+            r.onload = e => { els.input.value = e.target.result; render(); };
+            r.readAsText(file);
         }
 
         document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('input', render));
