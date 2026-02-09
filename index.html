@@ -8,22 +8,29 @@
     <!-- FUENTES -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- LIBRERÍA PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* --- ESTILOS DE IMPRESIÓN --- */
-        @media print {
-            @page { margin: 0; size: letter; }
-            body { background: white; padding: 0; margin: 0; }
-            .no-print, #mobileTabs, #panelConfig, .refresh-btn, #youtubeContainer, #metronomePanel { display: none !important; }
-            #panelPreview { display: block !important; margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; border: none !important; }
-            .sheet { box-shadow: none !important; margin: 0 auto !important; width: 8.5in !important; height: 11in !important; max-height: 11in !important; overflow: hidden !important; page-break-after: avoid !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        /* --- ESTILOS GENERALES --- */
+        body { background-color: #111827; color: #e5e7eb; }
+
+        /* HOJA CARTA */
+        .sheet {
+            width: 8.5in;
+            height: 11in;
+            background-color: white;
+            position: relative;
+            padding: 0.5in 0.7in;
+            box-sizing: border-box;
+            margin: 0 auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: black;
         }
 
-        /* --- HOJA CARTA --- */
-        .sheet { width: 8.5in; height: 11in; background-color: white; position: relative; padding: 0.5in 0.7in; box-sizing: border-box; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; color: black;}
-
-        /* PATRONES */
+        /* PATRONES DE FONDO */
         .pattern-montessori { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 19px, #bfdbfe 20px, transparent 21px, transparent 39px, #bfdbfe 40px, transparent 41px, transparent 59px, #e5e7eb 60px); background-size: 100% 60px; background-attachment: local; }
         .pattern-double { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 24px, #93c5fd 25px, transparent 26px, transparent 34px, #93c5fd 35px, transparent 36px, transparent 59px, #e5e7eb 60px); background-size: 100% 60px; background-attachment: local; }
         .pattern-lines { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 59px, #9ca3af 60px); background-size: 100% 60px; background-attachment: local; }
@@ -33,43 +40,22 @@
         .grayscale-mode .pattern-montessori { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 19px, #6b7280 20px, transparent 21px, transparent 39px, #6b7280 40px, transparent 41px, transparent 59px, #000 60px); }
         .grayscale-mode .pattern-double { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 24px, #6b7280 25px, transparent 26px, transparent 34px, #6b7280 35px, transparent 36px, transparent 59px, #000 60px); }
         .grayscale-mode .text-row { color: black !important; }
-        .grayscale-mode .svg-pattern { background-color: black !important; }
-
+        
         /* RENGLONES */
         #linesContainer { flex-grow: 1; width: 100%; position: relative; }
         .text-row { width: 100%; height: 60px; line-height: 60px; display: block; box-sizing: border-box; padding-top: 10px; white-space: nowrap; overflow: hidden; }
         .font-cursive { font-family: 'Dancing Script', cursive; padding-left: 8px; }
         .font-print { font-family: 'Lexend', sans-serif; letter-spacing: 1px; }
 
-        /* SVG */
+        /* SVG ROW */
         .svg-row { height: 60px; width: 100%; overflow: hidden; display: flex; align-items: flex-end; }
-        .svg-pattern { width: 100%; height: 60px; display: block; -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x; -webkit-mask-position: bottom left; mask-position: bottom left; background-color: currentColor; }
-
-        /* DEFINICIONES SVG (Stroke width variable via CSS var --stroke-w) */
-        :root { --stroke-w: 1.5; }
         
-        .p-verticals { -webkit-mask-size: 15px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='15' height='60' viewBox='0 0 15 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='7.5' y1='15' x2='7.5' y2='45' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-slanted { -webkit-mask-size: 15px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='15' height='60' viewBox='0 0 15 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='12' y1='15' x2='3' y2='45' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-dash { -webkit-mask-size: 25px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='25' height='60' viewBox='0 0 25 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='2' y1='30' x2='23' y2='30' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-square { -webkit-mask-size: 30px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='30' height='60' viewBox='0 0 30 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,45 L0,20 L15,20 L15,45 L30,45' fill='none' stroke='black' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-        .p-zig { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,45 L10,15 L20,45' fill='none' stroke='black' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-        .p-u { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2,20 Q10,55 18,20' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-arch { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2,45 Q10,10 18,45' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-c { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18,20 Q2,32.5 18,45' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-c-rev { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2,20 Q18,32.5 2,45' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-circle { -webkit-mask-size: 25px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='25' height='60' viewBox='0 0 25 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12.5' cy='32.5' r='8' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-l { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5,15 L5,40 Q5,45 15,45' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-j { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15,20 L15,45 Q15,55 5,50' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-e { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,45 Q5,45 5,35 Q5,25 10,25 Q15,25 15,35 Q15,45 20,45' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-loop-l { -webkit-mask-size: 20px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='60' viewBox='0 0 20 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,45 Q10,45 10,10 Q10,10 20,45' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-waves { -webkit-mask-size: 30px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='30' height='60' viewBox='0 0 30 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,35 Q7.5,20 15,35 T30,35' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-spring { -webkit-mask-size: 15px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='15' height='60' viewBox='0 0 15 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,40 Q7.5,10 15,40' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-swirl { -webkit-mask-size: 40px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='40' height='60' viewBox='0 0 40 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5,40 C5,25 35,25 35,40 C35,50 15,50 15,35 C15,30 25,30 25,35' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E"); }
-        .p-diamonds { -webkit-mask-size: 30px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='30' height='60' viewBox='0 0 30 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,32.5 L15,15 L30,32.5 L15,50 L0,32.5' fill='none' stroke='black' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-
         /* UI */
         .btn-exercise { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; padding: 4px; height: 50px; transition: all 0.2s; border-radius: 6px; }
-        .btn-preview { width: 100%; height: 25px; display: block; -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x; -webkit-mask-position: center; mask-position: center; background-color: #e5e7eb; margin-bottom: 2px; }
+        /* Preview usando el mismo SVG inline pero escalado */
+        .btn-preview { width: 100%; height: 25px; display: flex; justify-content: center; align-items: center; background-color: #e5e7eb; margin-bottom: 2px; overflow: hidden; }
+        .btn-preview svg { height: 100%; width: auto; }
+        
         details > summary { list-style: none; cursor: pointer; }
         
         @media (max-width: 768px) {
@@ -95,20 +81,17 @@
                     <p class="text-[10px] text-gray-400">by Juan Miguel Rios Redondo</p>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="exportLesson()" class="text-xs bg-green-900/50 hover:bg-green-800 text-green-200 px-3 py-1 rounded border border-green-800" title="Guardar Lección">💾</button>
-                    <label class="text-xs bg-blue-900/50 hover:bg-blue-800 text-blue-200 px-3 py-1 rounded border border-blue-800 cursor-pointer" title="Cargar Lección">
-                        📂 <input type="file" onchange="importLesson(this)" class="hidden">
-                    </label>
-                    <button onclick="resetAll()" class="text-xs bg-red-900/50 hover:bg-red-800 text-red-200 px-3 py-1 rounded border border-red-800">🗑️</button>
+                    <button onclick="window.location.reload()" class="text-xs bg-blue-900/50 hover:bg-blue-800 text-blue-200 px-3 py-1 rounded border border-blue-800 flex items-center gap-1">🔄 <span class="hidden md:inline">Recargar</span></button>
+                    <button onclick="resetAll()" class="text-xs bg-red-900/50 hover:bg-red-800 text-red-200 px-3 py-1 rounded border border-red-800">Borrar</button>
                 </div>
             </div>
 
             <!-- SECCIÓN MUSICAL -->
             <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-800">
-                <label class="text-[10px] text-indigo-300 uppercase font-bold block mb-2">🎵 Dibujo Rítmico (Repertorio)</label>
+                <label class="text-[10px] text-indigo-300 uppercase font-bold block mb-2">🎵 Dibujo Rítmico</label>
                 <div class="flex gap-2 mb-2">
                     <select id="songSelect" class="w-full bg-gray-900 border border-gray-600 text-gray-200 rounded p-1 text-xs">
-                        <option value="">Selecciona una obra...</option>
+                        <option value="">Selecciona obra...</option>
                         <optgroup label="1. Rectos y Marcados">
                             <option value="radetzky">1. Marcha Radetzky</option>
                             <option value="marcha_turca">2. Marcha Turca</option>
@@ -152,16 +135,11 @@
                     </select>
                     <button onclick="loadSong()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 rounded text-xs font-bold">Cargar</button>
                 </div>
-                <!-- METRÓNOMO Y YOUTUBE -->
-                <div class="flex items-center gap-2 mt-2">
-                    <div id="youtubeContainer" class="hidden text-[10px] flex-grow">
-                        <a id="youtubeLink" href="#" target="_blank" class="block text-center text-indigo-400 underline hover:text-indigo-300 bg-gray-900 border border-gray-600 rounded p-1">▶️ Ver en YouTube</a>
-                    </div>
-                    <!-- Metrónomo Simple -->
+                <div id="youtubeContainer" class="hidden text-[10px] text-center mt-2 flex gap-2 items-center">
+                    <a id="youtubeLink" href="#" target="_blank" class="flex-grow text-center text-indigo-400 underline hover:text-indigo-300 bg-gray-900 border border-gray-600 rounded p-1">▶️ Ver en YouTube</a>
                     <div class="flex items-center gap-1 bg-gray-800 rounded p-1 border border-gray-600">
                         <button id="metroBtn" onclick="toggleMetronome()" class="text-xs px-2 py-0.5 bg-gray-600 rounded hover:bg-gray-500">▶</button>
-                        <input type="number" id="bpmInput" value="60" class="w-10 text-xs bg-transparent text-center outline-none" title="BPM">
-                        <span class="text-[9px] text-gray-400">BPM</span>
+                        <input type="number" id="bpmInput" value="60" class="w-8 text-xs bg-transparent text-center outline-none">
                     </div>
                 </div>
             </div>
@@ -174,7 +152,7 @@
 
             <!-- GENERADORES -->
             <div class="bg-gray-800 p-3 rounded-lg border border-gray-700">
-                <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2">Rutinas Rápidas</label>
+                <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2">Generar Rutina</label>
                 <div class="grid grid-cols-5 gap-2">
                     <button onclick="fillPage('rectos')" class="p-2 bg-blue-900/30 hover:bg-blue-800 border border-blue-800 rounded flex flex-col items-center"><span class="text-lg">📏</span></button>
                     <button onclick="fillPage('curvas')" class="p-2 bg-green-900/30 hover:bg-green-800 border border-green-800 rounded flex flex-col items-center"><span class="text-lg">d o</span></button>
@@ -185,9 +163,9 @@
             </div>
 
             <!-- ACORDEONES MANUALES -->
-            <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-blue-300 hover:bg-gray-700 flex justify-between select-none">1. Trazos Rectos<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50"><button onclick="addGraphic('{{VERT}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-verticals"></span>||||</button><button onclick="addGraphic('{{INCL}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-slanted"></span>////</button><button onclick="addGraphic('{{GUION}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-dash"></span>----</button><button onclick="addGraphic('{{ALMENA}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-square"></span>Castillo</button><button onclick="addGraphic('{{ZIGZAG}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-zig"></span>ZigZag</button><button onclick="addGraphic('{{L_SHAPE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-l"></span>L L L</button></div></details>
-            <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-green-300 hover:bg-gray-700 flex justify-between select-none">2. Curvas<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50"><button onclick="addGraphic('{{U_SHAPE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-u"></span>U U U</button><button onclick="addGraphic('{{ARCH}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-arch"></span>Arcos</button><button onclick="addGraphic('{{C_SHAPE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-c"></span>C C C</button><button onclick="addGraphic('{{C_REV}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-c-rev"></span>C Inv.</button><button onclick="addGraphic('{{CIRCLE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-circle"></span>ooo</button><button onclick="addGraphic('{{J_HOOK}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-j"></span>J J J</button></div></details>
-            <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-orange-300 hover:bg-gray-700 flex justify-between select-none">3. Bucles<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50"><button onclick="addGraphic('{{BUCLE_E}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-e"></span>elelel</button><button onclick="addGraphic('{{BUCLE_L}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-loop-l"></span>Alto</button><button onclick="addGraphic('{{OLAS}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-waves"></span>Olas</button><button onclick="addGraphic('{{MUELLE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-spring"></span>Muelle</button><button onclick="addGraphic('{{ESPIRAL}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-swirl"></span>Espiral</button><button onclick="addGraphic('{{ROMBOS}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-diamonds"></span>Rombos</button></div></details>
+            <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-blue-300 hover:bg-gray-700 flex justify-between select-none">1. Trazos Rectos<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50" id="btnGroupRectos"></div></details>
+            <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-green-300 hover:bg-gray-700 flex justify-between select-none">2. Curvas<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50" id="btnGroupCurvas"></div></details>
+            <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-orange-300 hover:bg-gray-700 flex justify-between select-none">3. Bucles<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50" id="btnGroupBucles"></div></details>
 
             <!-- INPUT -->
             <div>
@@ -195,7 +173,7 @@
                  <button onclick="fillRemaining()" class="w-full mt-2 text-xs bg-indigo-700 hover:bg-indigo-600 text-white p-2 rounded font-bold transition">✨ Rellenar Espacio Restante</button>
             </div>
 
-            <!-- AJUSTES Y CONTROLES -->
+            <!-- AJUSTES -->
             <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-3">
                 <div class="flex justify-between items-center text-[10px] border-b border-gray-700 pb-2">
                     <label class="flex items-center text-gray-400 font-bold"><input type="checkbox" id="toggleHeader" checked onchange="render()" class="accent-blue-500 mr-1"> Encabezado</label>
@@ -221,7 +199,7 @@
                 </div>
 
                 <!-- CONTROLES TÉCNICOS -->
-                <div class="space-y-2 border-t border-gray-700 pt-2">
+                <div class="grid grid-cols-2 gap-2 border-t border-gray-700 pt-2">
                     <div>
                         <div class="flex justify-between mb-1">
                             <label class="text-[10px] text-gray-400 uppercase font-bold">Opacidad</label>
@@ -238,7 +216,7 @@
                     </div>
                     <div>
                         <div class="flex justify-between mb-1">
-                            <label class="text-[10px] text-gray-400 uppercase font-bold">Grosor Trazo</label>
+                            <label class="text-[10px] text-gray-400 uppercase font-bold">Grosor</label>
                             <span id="weightVal" class="text-[9px] font-mono text-blue-300">Normal</span>
                         </div>
                         <input type="range" id="weightRange" min="1" max="5" step="0.5" value="1.5" class="w-full h-1 bg-gray-600 rounded accent-blue-400">
@@ -272,18 +250,14 @@
 
     <!-- PREVIEW AREA -->
     <main id="panelPreview" class="flex-1 bg-gray-800 h-full overflow-hidden flex flex-col relative hidden md:flex">
-        <!-- BARRA SUPERIOR MÓVIL CON RECARGAR -->
         <div class="md:hidden bg-gray-900 text-white p-2 text-center text-xs font-bold uppercase tracking-widest shadow z-10 flex justify-between items-center px-4 no-print">
             <span>Vista Previa</span>
-            <button onclick="window.location.reload()" class="refresh-btn text-xs bg-gray-800 hover:bg-gray-700 p-1 rounded border border-gray-600">
-                🔄
-            </button>
+            <button onclick="downloadPDF()" class="text-xs bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded font-bold">Guardar PDF</button>
         </div>
 
         <div id="previewContainer" class="flex-1 w-full flex justify-center p-0 md:p-8 overflow-auto">
             <div id="sheet" class="sheet pattern-montessori shadow-2xl origin-top">
                 <div class="flex-grow flex flex-col h-full">
-                    <!-- HEADER AREA (Condicional) -->
                     <div id="headerContainer" class="flex flex-col items-center border-b-2 border-gray-800 pb-2 mb-0 h-[25mm] justify-end flex-shrink-0 transition-all duration-300 overflow-hidden">
                         <h1 id="headerTitleDisplay" class="text-xl font-bold text-gray-800 uppercase tracking-wide font-sans w-full text-center">Caligrafía</h1>
                         <div class="w-full flex justify-between text-sm text-gray-500 mt-1 font-mono">
@@ -291,18 +265,17 @@
                             <span>Fecha: _______</span>
                         </div>
                     </div>
-                    <!-- LINES CONTAINER -->
-                    <div id="linesContainer" class="w-full relative flex-grow">
-                        <!-- BG Pattern applied here dynamically via JS -->
-                    </div>
+                    <div id="linesContainer" class="w-full relative flex-grow"></div>
                 </div>
-                <!-- FOOTER -->
                 <div class="mt-auto pt-1 border-t border-gray-300 text-center flex-shrink-0">
                     <p class="text-[8px] text-gray-400 font-sans">Material educativo creado con el Entrenador de Caligrafía de Juan Miguel Rios Redondo</p>
                 </div>
             </div>
         </div>
-        <button id="printFloatBtn" onclick="window.print()" class="absolute bottom-24 right-6 md:bottom-10 md:right-10 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50 hover:bg-blue-500 transition-all transform hover:scale-110 border-2 border-white no-print">🖨️</button>
+        <button id="printFloatBtn" onclick="downloadPDF()" class="absolute bottom-24 right-6 md:bottom-10 md:right-10 bg-red-600 text-white p-4 rounded-full shadow-lg z-50 hover:bg-red-500 transition-all transform hover:scale-110 border-2 border-white no-print shadow-xl">
+            <span class="text-xs font-bold block text-center">PDF</span>
+            ⬇️
+        </button>
     </main>
 
     <!-- TABS MÓVIL -->
@@ -312,21 +285,44 @@
     </nav>
 
     <script>
-        const graphics = {
-            '{{VERT}}': 'p-verticals', '{{INCL}}': 'p-slanted', '{{GUION}}': 'p-dash', '{{ALMENA}}': 'p-square', '{{ZIGZAG}}': 'p-zig',
-            '{{L_SHAPE}}': 'p-l', '{{U_SHAPE}}': 'p-u', '{{ARCH}}': 'p-arch', '{{C_SHAPE}}': 'p-c', '{{C_REV}}': 'p-c-rev',
-            '{{CIRCLE}}': 'p-circle', '{{J_HOOK}}': 'p-j', '{{BUCLE_E}}': 'p-e', '{{BUCLE_L}}': 'p-loop-l',
-            '{{OLAS}}': 'p-waves', '{{MUELLE}}': 'p-spring', '{{ESPIRAL}}': 'p-swirl', '{{ROMBOS}}': 'p-diamonds'
+        // DEFINICIÓN DE SVG PATHS (Para inline SVG y coloreado correcto)
+        const svgPaths = {
+            '{{VERT}}': '<line x1="7.5" y1="15" x2="7.5" y2="45"/>',
+            '{{INCL}}': '<line x1="12" y1="15" x2="3" y2="45"/>',
+            '{{GUION}}': '<line x1="2" y1="30" x2="23" y2="30"/>',
+            '{{ALMENA}}': '<path d="M0,45 L0,20 L15,20 L15,45 L30,45" fill="none"/>',
+            '{{ZIGZAG}}': '<path d="M0,45 L10,15 L20,45" fill="none"/>',
+            '{{L_SHAPE}}': '<path d="M5,15 L5,40 Q5,45 15,45" fill="none"/>',
+            '{{U_SHAPE}}': '<path d="M2,20 Q10,55 18,20" fill="none"/>',
+            '{{ARCH}}': '<path d="M2,45 Q10,10 18,45" fill="none"/>',
+            '{{C_SHAPE}}': '<path d="M18,20 Q2,32.5 18,45" fill="none"/>',
+            '{{C_REV}}': '<path d="M2,20 Q18,32.5 2,45" fill="none"/>',
+            '{{CIRCLE}}': '<circle cx="12.5" cy="32.5" r="8" fill="none"/>',
+            '{{J_HOOK}}': '<path d="M15,20 L15,45 Q15,55 5,50" fill="none"/>',
+            '{{BUCLE_E}}': '<path d="M0,45 Q5,45 5,35 Q5,25 10,25 Q15,25 15,35 Q15,45 20,45" fill="none"/>',
+            '{{BUCLE_L}}': '<path d="M0,45 Q10,45 10,10 Q10,10 20,45" fill="none"/>',
+            '{{OLAS}}': '<path d="M0,35 Q7.5,20 15,35 T30,35" fill="none"/>',
+            '{{MUELLE}}': '<path d="M0,40 Q7.5,10 15,40" fill="none"/>',
+            '{{ESPIRAL}}': '<path d="M5,40 C5,25 35,25 35,40 C35,50 15,50 15,35 C15,30 25,30 25,35" fill="none"/>',
+            '{{ROMBOS}}': '<path d="M0,32.5 L15,15 L30,32.5 L15,50 L0,32.5" fill="none"/>'
+        };
+
+        // Generación de botones dinámicos
+        const buttonConfig = {
+            'btnGroupRectos': ['{{VERT}}', '{{INCL}}', '{{GUION}}', '{{ALMENA}}', '{{ZIGZAG}}', '{{L_SHAPE}}'],
+            'btnGroupCurvas': ['{{U_SHAPE}}', '{{ARCH}}', '{{C_SHAPE}}', '{{C_REV}}', '{{CIRCLE}}', '{{J_HOOK}}'],
+            'btnGroupBucles': ['{{BUCLE_E}}', '{{BUCLE_L}}', '{{OLAS}}', '{{MUELLE}}', '{{ESPIRAL}}', '{{ROMBOS}}']
         };
 
         const categories = {
-            rectos: ['{{VERT}}', '{{INCL}}', '{{GUION}}', '{{ALMENA}}', '{{ZIGZAG}}', '{{L_SHAPE}}'],
-            curvas: ['{{U_SHAPE}}', '{{ARCH}}', '{{C_SHAPE}}', '{{C_REV}}', '{{CIRCLE}}', '{{J_HOOK}}'],
-            bucles: ['{{BUCLE_E}}', '{{BUCLE_L}}', '{{OLAS}}', '{{MUELLE}}', '{{ESPIRAL}}', '{{ROMBOS}}'],
-            mix: Object.keys(graphics),
+            rectos: buttonConfig.btnGroupRectos,
+            curvas: buttonConfig.btnGroupCurvas,
+            bucles: buttonConfig.btnGroupBucles,
+            mix: Object.keys(svgPaths),
             texto: ["Aa Bb Cc Dd Ee", "Ff Gg Hh Ii Jj", "Kk Ll Mm Nn Ññ", "Oo Pp Qq Rr Ss", "Tt Uu Vv Ww Xx", "Yy Zz 0 1 2 3 4"]
         };
 
+        // Repertorio musical (misma data que antes)
         const musicRep = {
             'marcha_turca': { name: "Marcha Turca (Mozart)", link: "https://www.youtube.com/watch?v=7bCl6MnQ8bw", patterns: ['{{ZIGZAG}}', '{{VERT}}', '{{ALMENA}}', '{{ZIGZAG}}'] },
             'radetzky': { name: "Marcha Radetzky", link: "https://www.youtube.com/watch?v=XzP2ThLUSCk", patterns: ['{{VERT}}', '{{GUION}}', '{{L_SHAPE}}', '{{VERT}}'] },
@@ -334,26 +330,22 @@
             'guillermo_tell': { name: "Guillermo Tell (Finale)", link: "https://www.youtube.com/watch?v=YIbYCOiETx0", patterns: ['{{INCL}}', '{{GUION}}', '{{INCL}}', '{{VERT}}'] },
             'sable': { name: "Danza del Sable", link: "https://www.youtube.com/watch?v=gqg3l3r_DRI", patterns: ['{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}', '{{VERT}}'] },
             'montescos': { name: "Montescos y Capuletos", link: "https://www.youtube.com/watch?v=Z_hOR50u7ek", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{VERT}}', '{{GUION}}'] },
-            
             'danubio': { name: "El Danubio Azul", link: "https://www.youtube.com/watch?v=dJCwYESbFOw", patterns: ['{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}', '{{OLAS}}'] },
             'cisne': { name: "El Cisne (Saint-Saëns)", link: "https://www.youtube.com/watch?v=3qrKjywjo7Q", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
             'acuario': { name: "Acuario (Saint-Saëns)", link: "https://www.youtube.com/watch?v=AsD0FDLOKGA", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
             'manana': { name: "La Mañana (Grieg)", link: "https://www.youtube.com/watch?v=-rh8gMvzKw0", patterns: ['{{ARCH}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ARCH}}'] },
             'thais': { name: "Meditación de Thais", link: "https://www.youtube.com/watch?v=PGd4rs-b6IA", patterns: ['{{OLAS}}', '{{C_SHAPE}}', '{{U_SHAPE}}', '{{OLAS}}'] },
             'bach_air': { name: "Air on G String", link: "https://www.youtube.com/watch?v=GMkmQlfkNIk", patterns: ['{{GUION}}', '{{OLAS}}', '{{GUION}}', '{{U_SHAPE}}'] },
-            
             'moscardon': { name: "El Vuelo del Moscardón", link: "https://www.youtube.com/watch?v=aYAJopwEYv8", patterns: ['{{BUCLE_E}}', '{{ESPIRAL}}', '{{BUCLE_E}}', '{{MUELLE}}'] },
             'flores': { name: "Vals de las Flores", link: "https://www.youtube.com/watch?v=QxHk_3yzt3c", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] },
             'primavera': { name: "La Primavera (Vivaldi)", link: "https://www.youtube.com/watch?v=l-dYNttdgl0", patterns: ['{{BUCLE_L}}', '{{ROMBOS}}', '{{U_SHAPE}}', '{{BUCLE_L}}'] },
             'tritsch': { name: "Tritsch-Tratsch Polka", link: "https://www.youtube.com/watch?v=7uV3X8y1YEQ", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] },
             'badinerie': { name: "Badinerie (Bach)", link: "https://www.youtube.com/watch?v=xVxwT78V9gw", patterns: ['{{BUCLE_E}}', '{{ROMBOS}}', '{{BUCLE_E}}', '{{ZIGZAG}}'] },
-            
             'pizzicato': { name: "Pizzicato Polka", link: "https://www.youtube.com/watch?v=R_xrkenwf3I", patterns: ['{{GUION}}', '{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}'] },
             'maquina': { name: "La Máquina de Escribir", link: "https://www.youtube.com/watch?v=G4nX0Xrn-wo", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}', '{{GUION}}'] },
             'plink': { name: "Plink, Plank, Plunk", link: "https://www.youtube.com/watch?v=e1k3B2d5q5w", patterns: ['{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}', '{{VERT}}'] },
             'hada': { name: "Danza Hada de Azúcar", link: "https://www.youtube.com/watch?v=Wz_f9B4pPtg", patterns: ['{{CIRCLE}}', '{{U_SHAPE}}', '{{CIRCLE}}', '{{ARCH}}'] },
             'popcorn': { name: "Popcorn", link: "https://www.youtube.com/watch?v=NjxwkZ1s7BA", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] },
-            
             'rey_montana': { name: "Rey de la Montaña", link: "https://www.youtube.com/watch?v=kLp_Hh6DKWc", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{ZIGZAG}}', '{{ESPIRAL}}'] },
             'pantera': { name: "Pantera Rosa", link: "https://www.youtube.com/watch?v=jBupII3LH_Q", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] },
             'elephant': { name: "Baby Elephant Walk", link: "https://www.youtube.com/watch?v=b1z4J_dJ8d4", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] },
@@ -366,9 +358,23 @@
 
         let selectedColor = '#000000'; 
         let maxLinesDynamic = 13;
+        let audioCtx = null;
         let metronomeInterval = null;
         let isMetronomeOn = false;
-        let audioCtx = null; // Global variable for AudioContext
+
+        // Render Buttons
+        Object.keys(buttonConfig).forEach(groupId => {
+            const container = document.getElementById(groupId);
+            buttonConfig[groupId].forEach(tag => {
+                const btn = document.createElement('button');
+                btn.className = "btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700";
+                btn.onclick = () => addGraphic(tag);
+                // Create SVG preview
+                const svgStr = `<svg viewBox="0 0 40 60" preserveAspectRatio="none" style="width:100%;height:100%;stroke:currentColor;stroke-width:2;">${svgPaths[tag]}</svg>`;
+                btn.innerHTML = `<span class="btn-preview bg-gray-300 text-black">${svgStr}</span><span class="text-[9px] mt-1 text-gray-400">${tag.replace(/[{}]/g, '')}</span>`;
+                container.appendChild(btn);
+            });
+        });
 
         // --- RENDER LOGIC ---
         const els = {
@@ -405,11 +411,9 @@
             const isGrayscale = els.checkGrayscale.checked;
             els.sheet.className = `sheet shadow-2xl origin-top ${els.paper.value} ${isGrayscale ? 'grayscale-mode' : ''}`;
             
-            // Configurar Grosor
-            document.documentElement.style.setProperty('--stroke-w', els.weight.value);
+            // Configurar Grosor y UI
             els.weightVal.textContent = els.weight.value + 'x';
-
-            // Configurar Encabezado
+            
             const showHeader = els.checkHeader.checked;
             if (showHeader) {
                 els.headerContainer.style.height = '25mm';
@@ -448,7 +452,7 @@
 
                 if (usedLines + cost > maxLinesDynamic) break;
 
-                const isGraphic = !!graphics[line];
+                const isGraphic = !!svgPaths[line];
                 
                 let effectiveColor = selectedColor;
                 if (selectedColor === 'rainbow') {
@@ -480,16 +484,38 @@
             
             if (isPattern) {
                 div.className = 'svg-row';
-                // Actualizar stroke-width en el SVG inline
+                // Generar Inline SVG Real
                 const weight = els.weight.value;
-                const patternUrl = graphics[content].replace(/stroke-width='[^']*'/g, `stroke-width='${weight}'`);
+                const widthDefault = content === '{{DASH}}' ? 25 : (content.includes('BUCLE') || content.includes('ESPIRAL') ? 40 : 20); // Ajuste ancho base
                 
-                div.innerHTML = `<div class="svg-pattern ${graphics[content]}" style="opacity:${opacity}; background-color:${finalColor}; --stroke-w:${weight}"></div>`;
+                const svgContent = `<svg viewBox="0 0 ${widthDefault} 60" preserveAspectRatio="none" 
+                    style="width:100%; height:60px; fill:none; stroke:${finalColor}; stroke-width:${weight}; opacity:${opacity}; display:block;">
+                    <pattern id="pat-${content}-${Math.random()}" patternUnits="userSpaceOnUse" width="${widthDefault}" height="60">
+                       ${svgPaths[content].replace(/stroke='[^']*'/g, '').replace(/stroke-width='[^']*'/g, '')} 
+                    </pattern>
+                    <rect width="100%" height="100%" fill="url(#pat-${content}-${Math.random()})" />
+                    <!-- Fallback: Repetir manual via JS (mejor para html2pdf) -->
+                    ${generateRepeatedPath(svgPaths[content], widthDefault)}
+                </svg>`;
                 
-                // Hack para aplicar el grosor dinámicamente si es posible, sino recargar imagen
-                // Para simplificar en esta versión, usamos CSS variables si el navegador lo soporta en masks,
-                // o regeneramos la clase. Aquí asumimos la variable CSS --stroke-w
+                // Opción B: Usar repeat-x de background con SVG Data URI codificado (Más compatible con html2pdf si inline falla)
+                // Pero inline es mejor para colores.
+                // Solución html2pdf: Construir un div con flex y muchos SVGs pequeños
                 
+                div.innerHTML = "";
+                div.style.display = "flex";
+                div.style.overflow = "hidden";
+                
+                // Repetir el SVG para llenar la línea
+                const count = Math.ceil(800 / widthDefault); 
+                for(let k=0; k<count; k++) {
+                    div.innerHTML += `<svg viewBox="0 0 ${widthDefault} 60" width="${widthDefault}" height="60" style="flex-shrink:0; overflow:visible; opacity:${opacity};">
+                        <g stroke="${finalColor}" stroke-width="${weight}" fill="none">
+                            ${svgPaths[content]}
+                        </g>
+                    </svg>`;
+                }
+
             } else if (!content) {
                 div.className = 'text-row';
                 div.innerHTML = '&nbsp;';
@@ -501,10 +527,30 @@
                 span.style.color = finalColor;
                 span.style.opacity = opacity;
                 span.style.fontSize = els.size.value + 'px';
-                span.style.fontWeight = els.weight.value > 2 ? 'bold' : 'normal'; // Simular grosor en texto
+                span.style.fontWeight = els.weight.value > 2 ? 'bold' : 'normal'; 
                 div.appendChild(span);
             }
             els.container.appendChild(div);
+        }
+        
+        function generateRepeatedPath(pathStr, width) {
+            return ''; // Usamos el bucle for en createRow mejor
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('sheet');
+            
+            const opt = {
+                margin: 0,
+                filename: `Caligrafia_${els.studentInput.value || 'Practica'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Workaround para asegurar renderizado correcto
+            // Clonar nodo y asegurar estilos antes de PDF
+            html2pdf().set(opt).from(element).save();
         }
 
         function addGraphic(tag) {
@@ -580,24 +626,18 @@
             else { document.getElementById('panelConfig').classList.add('hidden'); document.getElementById('panelPreview').classList.remove('hidden'); document.getElementById('panelPreview').classList.add('flex'); }
         }
 
-        // Metrónomo Simple
+        // Metrónomo
         function toggleMetronome() {
             if(isMetronomeOn) {
                 clearInterval(metronomeInterval);
                 els.metroBtn.textContent = "▶";
                 isMetronomeOn = false;
             } else {
-                // Initialize context on user gesture
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
                 const bpm = parseInt(els.bpmInput.value) || 60;
                 const intervalMs = 60000 / bpm;
-                playClick(); // Primer click
+                playClick();
                 metronomeInterval = setInterval(playClick, intervalMs);
                 els.metroBtn.textContent = "⏹";
                 isMetronomeOn = true;
@@ -605,26 +645,18 @@
         }
 
         function playClick() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            
+            if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            
             osc.frequency.value = 1000;
-            // Fix: use setValueAtTime before ramp to avoid glitches or errors in some browsers if value is 0
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime); 
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
-            
             osc.start();
             osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        // Import/Export
         function exportLesson() {
             const data = els.input.value;
             const blob = new Blob([data], {type: 'text/plain'});
@@ -639,10 +671,7 @@
             const file = input.files[0];
             if(!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
-                els.input.value = e.target.result;
-                render();
-            };
+            reader.onload = function(e) { els.input.value = e.target.result; render(); };
             reader.readAsText(file);
         }
 
@@ -651,8 +680,7 @@
                 text: els.input.value, size: els.size.value, opacity: els.opacity.value,
                 font: els.font.value, paper: els.paper.value, school: els.schoolInput.value,
                 student: els.studentInput.value, mode: document.querySelector('input[name="practiceMode"]:checked').value,
-                color: selectedColor, showHeader: els.checkHeader.checked, grayscale: els.checkGrayscale.checked,
-                weight: els.weight.value
+                color: selectedColor, showHeader: els.checkHeader.checked, grayscale: els.checkGrayscale.checked, weight: els.weight.value
             };
             localStorage.setItem('caligrafiaState', JSON.stringify(state));
         }
@@ -678,7 +706,6 @@
 
         document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('input', render));
         
-        // Init
         loadState();
         if(!els.input.value) fillPage('mix');
         if(window.innerWidth < 768) switchTab('preview');
