@@ -3,27 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Caligrafía </title>
+    <title>Entrenador Caligrafía v28</title>
     
     <!-- FUENTES -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        /* --- ESTILOS DE IMPRESIÓN --- */
+        /* =========================================
+           ESTILOS DE IMPRESIÓN (PDF LIMPIO)
+           ========================================= */
         @media print {
-            @page { margin: 0; size: letter; }
-            body { background: white; padding: 0; margin: 0; }
-            .no-print, #mobileTabs, #panelConfig, .refresh-btn, #youtubeContainer { display: none !important; }
-            #panelPreview { display: block !important; margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; border: none !important; }
-            .sheet { box-shadow: none !important; margin: 0 auto !important; width: 8.5in !important; height: 11in !important; max-height: 11in !important; overflow: hidden !important; page-break-after: avoid !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page {
+                size: letter;
+                margin: 0; /* Sin márgenes del navegador */
+            }
+
+            /* 1. Ocultar TODO por defecto */
+            body * {
+                visibility: hidden;
+            }
+
+            /* 2. Ocultar contenedores de UI explícitamente para que no ocupen espacio */
+            #panelConfig, #mobileTabs, .no-print, button {
+                display: none !important;
+            }
+
+            /* 3. Hacer visible SOLO la hoja y su contenido interno */
+            #sheet, #sheet * {
+                visibility: visible;
+            }
+
+            /* 4. Posicionar la hoja forzosamente en la esquina superior izquierda */
+            #sheet {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 8.5in !important;
+                height: 11in !important;
+                margin: 0 !important;
+                padding: 0.5in 0.7in !important; /* Respetar márgenes internos */
+                
+                background-color: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                z-index: 99999;
+                
+                overflow: hidden !important;
+                page-break-after: avoid !important;
+            }
+
+            /* 5. Asegurar impresión de gráficos exactos */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
         }
 
-        /* --- HOJA CARTA --- */
-        .sheet { width: 8.5in; height: 11in; background-color: white; position: relative; padding: 0.5in 0.7in; box-sizing: border-box; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; }
+        /* --- ESTILOS DE PANTALLA --- */
+        body { background-color: #111827; color: #e5e7eb; }
 
-        /* PATRONES */
+        /* HOJA CARTA */
+        .sheet {
+            width: 8.5in;
+            height: 11in;
+            background-color: white;
+            position: relative;
+            padding: 0.5in 0.7in;
+            box-sizing: border-box;
+            margin: 0 auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: black;
+        }
+
+        /* PATRONES DE FONDO */
         .pattern-montessori { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 19px, #bfdbfe 20px, transparent 21px, transparent 39px, #bfdbfe 40px, transparent 41px, transparent 59px, #e5e7eb 60px); background-size: 100% 60px; background-attachment: local; }
         .pattern-double { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 24px, #93c5fd 25px, transparent 26px, transparent 34px, #93c5fd 35px, transparent 36px, transparent 59px, #e5e7eb 60px); background-size: 100% 60px; background-attachment: local; }
         .pattern-lines { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 59px, #9ca3af 60px); background-size: 100% 60px; background-attachment: local; }
@@ -65,6 +120,7 @@
         .p-swirl { -webkit-mask-size: 40px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='40' height='60' viewBox='0 0 40 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5,40 C5,25 35,25 35,40 C35,50 15,50 15,35 C15,30 25,30 25,35' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E"); }
         .p-diamonds { -webkit-mask-size: 30px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='30' height='60' viewBox='0 0 30 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,32.5 L15,15 L30,32.5 L15,50 L0,32.5' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E"); }
 
+        /* UI */
         .btn-exercise { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; padding: 4px; height: 50px; transition: all 0.2s; border-radius: 6px; }
         .btn-preview { width: 100%; height: 25px; display: block; -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x; -webkit-mask-position: center; mask-position: center; background-color: #e5e7eb; margin-bottom: 2px; }
         details > summary { list-style: none; cursor: pointer; }
@@ -182,6 +238,8 @@
 
             <!-- AJUSTES Y CONTROLES -->
             <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-3">
+                
+                <!-- Encabezado / Modo -->
                 <div class="flex justify-between items-center text-[10px] border-b border-gray-700 pb-2">
                     <label class="flex items-center text-gray-400 font-bold"><input type="checkbox" id="toggleHeader" checked onchange="render()" class="accent-blue-500 mr-1"> Mostrar Encabezado</label>
                     <label class="flex items-center text-gray-400 font-bold" title="Convierte líneas de color a negro/gris"><input type="checkbox" id="toggleGrayscale" onchange="render()" class="accent-gray-500 mr-1"> Modo Fotocopia</label>
@@ -198,13 +256,15 @@
                     <input type="text" id="studentName" placeholder="Alumno" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
                 </div>
 
+                <!-- Color -->
                 <div class="flex gap-2 justify-center pt-2 border-t border-gray-700">
-                    <button onclick="setColor('black')" class="w-5 h-5 rounded-full bg-black border border-gray-500"></button>
-                    <button onclick="setColor('#2563eb')" class="w-5 h-5 rounded-full bg-blue-600 border border-gray-500"></button>
-                    <button onclick="setColor('#dc2626')" class="w-5 h-5 rounded-full bg-red-600 border border-gray-500"></button>
-                    <button onclick="setColor('rainbow')" class="w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-red-500 border border-gray-500" title="Alternar Colores"></button>
+                    <button onclick="setColor('black')" class="w-5 h-5 rounded-full bg-black border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('#2563eb')" class="w-5 h-5 rounded-full bg-blue-600 border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('#dc2626')" class="w-5 h-5 rounded-full bg-red-600 border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('rainbow')" class="w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-red-500 border border-gray-500 ring-1 ring-white/20" title="Alternar Colores"></button>
                 </div>
 
+                <!-- CONTROLES TÉCNICOS -->
                 <div class="grid grid-cols-2 gap-2 border-t border-gray-700 pt-2">
                     <div>
                         <div class="flex justify-between mb-1">
@@ -249,14 +309,18 @@
 
     <!-- PREVIEW AREA -->
     <main id="panelPreview" class="flex-1 bg-gray-800 h-full overflow-hidden flex flex-col relative hidden md:flex">
-        <div class="md:hidden bg-gray-900 text-white p-2 text-center text-xs font-bold uppercase tracking-widest shadow z-10 flex justify-between items-center px-4">
+        <!-- BARRA SUPERIOR MÓVIL CON RECARGAR -->
+        <div class="md:hidden bg-gray-900 text-white p-2 text-center text-xs font-bold uppercase tracking-widest shadow z-10 flex justify-between items-center px-4 no-print">
             <span>Vista Previa</span>
-            <button onclick="window.location.reload()" class="text-xs bg-gray-800 hover:bg-gray-700 p-1 rounded border border-gray-600">🔄</button>
+            <button onclick="window.location.reload()" class="refresh-btn text-xs bg-gray-800 hover:bg-gray-700 p-1 rounded border border-gray-600">
+                🔄
+            </button>
         </div>
 
         <div id="previewContainer" class="flex-1 w-full flex justify-center p-0 md:p-8 overflow-auto">
             <div id="sheet" class="sheet pattern-montessori shadow-2xl origin-top">
                 <div class="flex-grow flex flex-col h-full">
+                    <!-- HEADER AREA (Condicional) -->
                     <div id="headerContainer" class="flex flex-col items-center border-b-2 border-gray-800 pb-2 mb-0 h-[25mm] justify-end flex-shrink-0 transition-all duration-300 overflow-hidden">
                         <h1 id="headerTitleDisplay" class="text-xl font-bold text-gray-800 uppercase tracking-wide font-sans w-full text-center">Caligrafía</h1>
                         <div class="w-full flex justify-between text-sm text-gray-500 mt-1 font-mono">
@@ -264,18 +328,22 @@
                             <span>Fecha: _______</span>
                         </div>
                     </div>
-                    <div id="linesContainer" class="w-full relative flex-grow"></div>
+                    <!-- LINES CONTAINER -->
+                    <div id="linesContainer" class="w-full relative flex-grow">
+                        <!-- BG Pattern applied here dynamically via JS -->
+                    </div>
                 </div>
+                <!-- FOOTER -->
                 <div class="mt-auto pt-1 border-t border-gray-300 text-center flex-shrink-0">
                     <p class="text-[8px] text-gray-400 font-sans">Material educativo creado con el Entrenador de Caligrafía de Juan Miguel Rios Redondo</p>
                 </div>
             </div>
         </div>
-        <button id="printFloatBtn" onclick="window.print()" class="absolute bottom-24 right-6 md:bottom-10 md:right-10 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50 hover:bg-blue-500 transition-all transform hover:scale-110 border-2 border-white">🖨️</button>
+        <button id="printFloatBtn" onclick="window.print()" class="absolute bottom-24 right-6 md:bottom-10 md:right-10 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50 hover:bg-blue-500 transition-all transform hover:scale-110 border-2 border-white no-print">🖨️</button>
     </main>
 
     <!-- TABS MÓVIL -->
-    <nav id="mobileTabs" class="fixed bottom-0 w-full bg-gray-900 border-t border-gray-800 flex justify-around py-2 z-50 shadow-lg md:hidden h-16">
+    <nav id="mobileTabs" class="fixed bottom-0 w-full bg-gray-900 border-t border-gray-800 flex justify-around py-2 z-50 shadow-lg md:hidden h-16 no-print">
         <button onclick="switchTab('config')" id="tabConfig" class="flex flex-col items-center justify-center text-blue-400 w-1/2"><span class="text-xl mb-1">🛠️</span><span class="text-[10px] font-bold">EDITOR</span></button>
         <button onclick="switchTab('preview')" id="tabPreview" class="flex flex-col items-center justify-center text-gray-400 w-1/2"><span class="text-xl mb-1">📄</span><span class="text-[10px] font-bold">HOJA</span></button>
     </nav>
