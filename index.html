@@ -11,18 +11,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* --- VARIABLES DINÁMICAS --- */
+        /* --- VARIABLES --- */
         :root {
-            --row-h: 60px;       /* Altura base del renglón */
-            --font-s: 40px;      /* Tamaño fuente */
-            --base-pos: 75%;     /* Línea base */
-            --grid-s: calc(var(--row-h) / 4); 
-            --stroke-w: 1.5px;
+            --row-h: 60px;
+            --font-s: 40px;
+            --line-color: #9ca3af;
         }
 
         body { background-color: #111827; color: #e5e7eb; }
 
-        /* MODAL */
+        /* MODAL PDF */
         #pdfLoadingModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9); z-index: 100000;
@@ -35,55 +33,55 @@
         .sheet {
             width: 8.5in; min-height: 11in; background-color: white; position: relative;
             padding: 0.5in 0.7in; box-sizing: border-box; margin: 0 auto; color: black;
+            /* El fondo se aplica al contenedor principal para que sea continuo */
         }
 
-        /* --- RENGLONES ELÁSTICOS --- */
-        .dynamic-row {
-            width: 100%;
-            /* Altura mínima para gráficos, pero crece con texto largo */
-            min-height: var(--row-h); 
-            position: relative;
-            display: flex;
-            align-items: flex-end; 
-            /* Padding para asentar letra en la línea base */
-            padding-bottom: calc(var(--row-h) * 0.22); 
-            box-sizing: border-box;
-        }
-
-        /* PAUTAS (Backgrounds repetibles) */
+        /* --- FONDOS DE PAPEL (FIJOS) --- */
+        
+        /* Cuadrícula Fija de 20px (No cambia con el slider) */
         .bg-grid {
             background-image: linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
-            background-size: var(--grid-s) var(--grid-s);
-            background-position: -1px calc(var(--row-h) * 0.75); 
+            background-size: 20px 20px; 
+            background-position: 0 10px; /* Ajuste vertical para coincidir con base */
         }
-        .bg-lines {
-            background-image: linear-gradient(to bottom, transparent calc(var(--base-pos) - 1px), #9ca3af calc(var(--base-pos) - 1px), #9ca3af var(--base-pos), transparent var(--base-pos));
-            background-size: 100% var(--row-h);
+
+        /* Rayado: La línea está fija visualmente al fondo del renglón */
+        /* Usamos background-size 100% var(--row-h) en el renglón individual */
+        .pattern-line-css {
+            background-image: linear-gradient(to bottom, transparent calc(100% - 1px), #9ca3af calc(100% - 1px));
+            background-size: 100% 100%;
         }
-        .bg-montessori {
-            background-image: linear-gradient(to bottom, transparent calc(var(--row-h) * 0.35), #93c5fd calc(var(--row-h) * 0.35), #93c5fd calc(var(--row-h) * 0.35 + 1px), transparent calc(var(--row-h) * 0.35 + 1px), transparent calc(var(--base-pos) - 1px), #93c5fd calc(var(--base-pos) - 1px), #93c5fd var(--base-pos), transparent var(--base-pos));
-            border-bottom: 1px solid #f3f4f6;
-            background-size: 100% var(--row-h);
-        }
-        .bg-double {
-            background-image: linear-gradient(to bottom, transparent calc(var(--row-h) * 0.35), #000 calc(var(--row-h) * 0.35), #000 calc(var(--row-h) * 0.35 + 1px), transparent calc(var(--row-h) * 0.35 + 1px), transparent calc(var(--base-pos) - 1px), #000 calc(var(--base-pos) - 1px), #000 var(--base-pos), transparent var(--base-pos));
-            background-size: 100% var(--row-h);
-        }
+
+        /* Blanco */
         .bg-blank { background: none; border-bottom: 1px dashed #f9fafb; }
 
         /* MODO FOTOCOPIA */
-        .grayscale-mode .pattern-montessori { background-image: linear-gradient(to bottom, transparent calc(var(--row-h) * 0.35), #6b7280 calc(var(--row-h) * 0.35), #6b7280 calc(var(--row-h) * 0.35 + 1px), transparent calc(var(--row-h) * 0.35 + 1px), transparent calc(var(--base-pos) - 1px), #000 calc(var(--base-pos) - 1px), #000 var(--base-pos), transparent var(--base-pos)); }
-        .grayscale-mode .pattern-double { background-image: linear-gradient(to bottom, transparent calc(var(--row-h) * 0.35), #6b7280 calc(var(--row-h) * 0.35), #6b7280 calc(var(--row-h) * 0.35 + 1px), transparent calc(var(--row-h) * 0.35 + 1px), transparent calc(var(--base-pos) - 1px), #000 calc(var(--base-pos) - 1px), #000 var(--base-pos), transparent var(--base-pos)); }
+        .grayscale-mode .dynamic-row { border-color: black !important; }
+        .grayscale-mode .pattern-line-css { background-image: linear-gradient(to bottom, transparent calc(100% - 1px), #000 calc(100% - 1px)); }
 
-        /* TEXTO (Ajuste de márgenes) */
+        /* --- RENGLONES --- */
+        .dynamic-row {
+            width: 100%;
+            /* Altura controlada por slider */
+            height: var(--row-h); 
+            position: relative;
+            display: flex;
+            align-items: flex-end; /* Alinear contenido al fondo */
+            /* Padding bottom exacto para que la letra se asiente sobre la línea */
+            padding-bottom: 8px; 
+            box-sizing: border-box;
+        }
+
+        /* TEXTO */
         .row-text {
             font-size: var(--font-s);
-            line-height: var(--row-h); 
+            line-height: 1; 
             width: 100%;
             white-space: pre-wrap; 
             word-break: break-word;
             z-index: 10;
-            margin-top: -10px; 
+            /* Ajuste fino para tipografía */
+            transform: translateY(2px); 
         }
         .font-cursive { font-family: 'Dancing Script', cursive; }
         .font-print { font-family: 'Lexend', sans-serif; letter-spacing: 2px; }
@@ -91,8 +89,10 @@
         /* SVG */
         .row-svg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; align-items: center; overflow: hidden;
-            pointer-events: none;
+            display: flex; align-items: center; overflow: hidden; pointer-events: none;
+            /* El SVG se centra verticalmente, pero su base debe coincidir */
+            padding-bottom: 8px; 
+            box-sizing: border-box;
         }
         .row-svg svg { height: 100%; width: auto; }
 
@@ -104,7 +104,7 @@
 
         @media (max-width: 768px) {
             .sheet { min-width: 8.5in; }
-            #previewContainer { height: calc(100vh - 80px); background: #1f2937; padding: 10px; display: block; overflow: auto; -webkit-overflow-scrolling: touch; }
+            #previewContainer { height: calc(100vh - 80px); background: #111827; padding: 10px; display: block; overflow: auto; -webkit-overflow-scrolling: touch; }
             #panelConfig { background-color: #111827; } 
         }
         @media (min-width: 769px) {
@@ -112,15 +112,11 @@
             #panelConfig { display: flex !important; }
             #panelPreview { display: flex !important; }
         }
-
-        /* Estilos de Impresión */
         @media print {
-            @page { margin: 0; size: letter; }
+            .no-print { display: none !important; }
             body * { visibility: hidden; }
             #sheet, #sheet * { visibility: visible; }
             #sheet { position: fixed; left: 0; top: 0; width: 8.5in !important; height: 11in !important; margin: 0 !important; padding: 0.5in 0.7in !important; overflow: hidden !important; z-index: 99999; background: white !important; color: black !important; }
-            .no-print { display: none !important; }
-            #panelConfig { display: none !important; }
         }
     </style>
 </head>
@@ -144,10 +140,7 @@
 
             <!-- SECCIÓN MUSICAL -->
             <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-800 shadow-inner">
-                <label class="text-[10px] text-indigo-300 uppercase font-bold block mb-2 flex justify-between">
-                    <span>🎵 Repertorio Musical</span>
-                </label>
-                
+                <label class="text-[10px] text-indigo-300 uppercase font-bold block mb-2">🎵 Repertorio Musical</label>
                 <div class="flex gap-2 mb-3">
                     <select id="songSelect" class="w-full bg-gray-900 border border-gray-600 text-gray-200 rounded p-1 text-xs focus:ring-2 focus:ring-indigo-500">
                         <option value="">-- Selecciona Obra --</option>
@@ -195,11 +188,7 @@
                     <button onclick="loadSong()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 rounded text-xs font-bold transition">Cargar</button>
                 </div>
                 
-                <!-- REPRODUCTOR INTEGRADO -->
-                <div id="youtubeContainer" class="hidden rounded overflow-hidden border border-gray-700 mt-2 bg-black">
-                    <!-- El iframe se inyectará aquí -->
-                </div>
-
+                <div id="youtubeContainer" class="hidden rounded overflow-hidden border border-gray-700 mt-2 bg-black"></div>
                 <div class="flex items-center gap-2 mt-2">
                      <div class="flex items-center gap-1 bg-gray-800 rounded p-1 border border-gray-600 w-full justify-center">
                         <button id="metroBtn" onclick="toggleMetronome()" class="text-xs px-3 py-1 bg-gray-600 rounded hover:bg-gray-500">▶ Metrónomo</button>
@@ -211,11 +200,11 @@
 
             <!-- CONTADOR -->
             <div class="bg-gray-800 p-2 rounded border border-gray-600 flex justify-between items-center">
-                <span class="text-xs font-bold text-gray-300 uppercase">Capacidad Hoja:</span>
+                <span class="text-xs font-bold text-gray-300 uppercase">Capacidad:</span>
                 <span id="lineCounter" class="text-xs font-mono font-bold text-green-400">0 / --</span>
             </div>
 
-            <!-- GENERADORES TRAZOS Y TEXTO -->
+            <!-- GENERADORES -->
             <div class="bg-gray-800 p-3 rounded-lg border border-gray-700">
                 <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2">Trazos Básicos</label>
                 <div class="grid grid-cols-5 gap-2">
@@ -226,18 +215,11 @@
                     <button onclick="fillPage('texto')" class="p-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded flex flex-col items-center"><span class="text-lg">📝</span></button>
                 </div>
                 
-                <!-- LETRAS (RESTAURADO) -->
-                <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2 mt-3 pt-3 border-t border-gray-600">Práctica de Letras</label>
+                <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2 mt-3 pt-3 border-t border-gray-600">Letras</label>
                 <div class="grid grid-cols-3 gap-2">
-                    <button onclick="fillPage('abecedario')" class="p-2 bg-indigo-900/30 hover:bg-indigo-800 border border-indigo-800 rounded flex flex-col items-center">
-                        <span class="text-lg">🔤</span><span class="text-[9px] mt-1 text-indigo-200">ABC</span>
-                    </button>
-                    <button onclick="fillPage('vocales')" class="p-2 bg-pink-900/30 hover:bg-pink-800 border border-pink-800 rounded flex flex-col items-center">
-                        <span class="text-lg">🗣️</span><span class="text-[9px] mt-1 text-pink-200">Vocales</span>
-                    </button>
-                    <button onclick="fillPage('pangramas')" class="p-2 bg-teal-900/30 hover:bg-teal-800 border border-teal-800 rounded flex flex-col items-center">
-                        <span class="text-lg">📜</span><span class="text-[9px] mt-1 text-teal-200">Frases</span>
-                    </button>
+                    <button onclick="fillPage('abecedario')" class="p-2 bg-indigo-900/30 hover:bg-indigo-800 border border-indigo-800 rounded flex flex-col items-center"><span class="text-lg">🔤</span></button>
+                    <button onclick="fillPage('vocales')" class="p-2 bg-pink-900/30 hover:bg-pink-800 border border-pink-800 rounded flex flex-col items-center"><span class="text-lg">🗣️</span></button>
+                    <button onclick="fillPage('pangramas')" class="p-2 bg-teal-900/30 hover:bg-teal-800 border border-teal-800 rounded flex flex-col items-center"><span class="text-lg">📜</span></button>
                 </div>
             </div>
 
@@ -262,7 +244,7 @@
                 
                 <div id="headerInputs" class="flex gap-2">
                     <input type="text" id="schoolName" placeholder="Colegio" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
-                    <input type="text" id="studentName" placeholder="Nombre" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
+                    <input type="text" id="studentName" placeholder="Alumno/Título" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
                 </div>
 
                 <div class="flex gap-2 justify-center pt-2 border-t border-gray-700">
@@ -290,10 +272,8 @@
                      <div>
                         <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Papel</label>
                         <select id="paperSelect" class="w-full bg-gray-900 border border-gray-600 text-gray-300 rounded p-1 text-[10px]">
-                            <option value="bg-grid">Cuadrícula</option>
                             <option value="bg-lines">Rayado</option>
-                            <option value="bg-montessori">Montessori</option>
-                            <option value="bg-double">Doble Raya</option>
+                            <option value="bg-grid">Cuadrícula</option>
                             <option value="bg-blank">Blanco</option>
                         </select>
                     </div>
@@ -307,19 +287,21 @@
                 </div>
             </div>
             
-            <div class="text-center pt-2 text-[10px] text-gray-500">v40.0 | JMR</div>
+            <div class="text-center pt-2 border-t border-gray-700 mt-2">
+                <p class="text-[10px] text-gray-500">Desarrollado por <strong class="text-gray-400">Juan Miguel Rios Redondo</strong></p>
+            </div>
         </div>
     </aside>
 
     <!-- PREVIEW AREA -->
     <main id="panelPreview" class="flex-1 bg-gray-800 h-full overflow-hidden flex flex-col relative hidden md:flex">
-        <div class="md:hidden bg-gray-900 text-white p-2 text-center text-xs font-bold uppercase shadow z-10 flex justify-between items-center px-4">
+        <div class="md:hidden bg-gray-900 text-white p-2 text-center text-xs font-bold uppercase shadow z-10 flex justify-between items-center px-4 no-print">
             <span>Vista Previa</span>
             <button onclick="downloadPDF()" class="text-xs bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded font-bold">PDF</button>
         </div>
 
         <div id="previewContainer" class="flex-1 w-full flex justify-center p-0 md:p-8 overflow-auto">
-            <div id="sheet" class="sheet shadow-2xl origin-top">
+            <div id="sheet" class="sheet bg-lines shadow-2xl origin-top">
                 <div class="flex-grow flex flex-col h-full w-full">
                     <div id="headerContainer" class="flex flex-col items-center border-b-2 border-gray-800 pb-2 mb-0 h-[25mm] justify-end flex-shrink-0 w-full">
                         <h1 id="headerTitleDisplay" class="text-xl font-bold text-gray-800 uppercase tracking-wide font-sans w-full text-center">Caligrafía</h1>
@@ -335,20 +317,19 @@
                 </div>
             </div>
         </div>
-        <button onclick="downloadPDF()" class="absolute bottom-10 right-10 bg-red-600 hover:bg-red-500 text-white p-4 rounded-full shadow-xl z-50 transition transform hover:scale-110 hidden md:flex flex-col items-center justify-center h-16 w-16">
+        <button onclick="downloadPDF()" class="absolute bottom-10 right-10 bg-red-600 hover:bg-red-500 text-white p-4 rounded-full shadow-xl z-50 transition transform hover:scale-110 hidden md:flex flex-col items-center justify-center h-16 w-16 no-print">
             <span class="text-xs font-bold">PDF</span>
             <span class="text-lg">⬇️</span>
         </button>
     </main>
 
     <!-- TABS MÓVIL -->
-    <nav id="mobileTabs" class="fixed bottom-0 w-full bg-gray-900 border-t border-gray-800 flex justify-around py-2 z-50 shadow-lg md:hidden h-16">
+    <nav id="mobileTabs" class="fixed bottom-0 w-full bg-gray-900 border-t border-gray-800 flex justify-around py-2 z-50 shadow-lg md:hidden h-16 no-print">
         <button onclick="switchTab('config')" id="tabConfig" class="flex flex-col items-center justify-center text-blue-400 w-1/2"><span class="text-xl mb-1">🛠️</span><span class="text-[10px] font-bold">EDITOR</span></button>
         <button onclick="switchTab('preview')" id="tabPreview" class="flex flex-col items-center justify-center text-gray-400 w-1/2"><span class="text-xl mb-1">📄</span><span class="text-[10px] font-bold">HOJA</span></button>
     </nav>
 
     <script>
-        // --- 1. SVG PATHS ---
         const svgPaths = {
             '{{VERT}}': '<line x1="7.5" y1="15" x2="7.5" y2="45" />', '{{INCL}}': '<line x1="12" y1="15" x2="3" y2="45" />',
             '{{GUION}}': '<line x1="2" y1="30" x2="23" y2="30" />', '{{ALMENA}}': '<path d="M0,45 L0,20 L15,20 L15,45 L30,45" fill="none" />',
@@ -375,47 +356,45 @@
             bucles: buttonConfig.btnGroupBucles,
             mix: Object.keys(svgPaths),
             texto: ["Aa Bb Cc Dd Ee", "Ff Gg Hh Ii Jj", "Kk Ll Mm Nn Ññ", "Oo Pp Qq Rr Ss", "Tt Uu Vv Ww Xx", "Yy Zz 0 1 2 3 4"],
-            // NUEVAS
             abecedario: ["Aa Bb Cc Dd Ee Ff Gg Hh", "Ii Jj Kk Ll Mm Nn Ññ Oo", "Pp Qq Rr Ss Tt Uu Vv Ww", "Xx Yy Zz 0 1 2 3 4 5 6 7 8 9"],
             vocales: ["Aa Ee Ii Oo Uu", "a e i o u a e i o u", "A E I O U A E I O U", "AEIOU AEIOU"],
             pangramas: ["El veloz murciélago hindú comía feliz cardillo y kiwi.", "La cigüeña tocaba el saxofón detrás del palenque de paja.", "Jovencillo emponzoñado de whisky: ¡qué figurota exhibe!", "Benjamín pidió una bebida de kiwi y fresa; Noé, sin vergüenza."]
         };
 
         const musicRep = {
-            'marcha_turca': { id: "7bCl6MnQ8bw", patterns: ['{{ZIGZAG}}', '{{VERT}}', '{{ALMENA}}', '{{ZIGZAG}}'] },
-            'radetzky': { id: "XzP2ThLUSCk", patterns: ['{{VERT}}', '{{GUION}}', '{{L_SHAPE}}', '{{VERT}}'] },
-            'toreros': { id: "4DNGMoMNLRY", patterns: ['{{ALMENA}}', '{{L_SHAPE}}', '{{VERT}}', '{{ALMENA}}'] },
-            'guillermo_tell': { id: "YIbYCOiETx0", patterns: ['{{INCL}}', '{{GUION}}', '{{INCL}}', '{{VERT}}'] },
-            'sable': { id: "gqg3l3r_DRI", patterns: ['{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}', '{{VERT}}'] },
-            'montescos': { id: "Z_hOR50u7ek", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{VERT}}', '{{GUION}}'] },
-            'danubio': { id: "dJCwYESbFOw", patterns: ['{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}', '{{OLAS}}'] },
-            'cisne': { id: "3qrKjywjo7Q", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
-            'acuario': { id: "AsD0FDLOKGA", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
-            'manana': { id: "-rh8gMvzKw0", patterns: ['{{ARCH}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ARCH}}'] },
-            'thais': { id: "PGd4rs-b6IA", patterns: ['{{OLAS}}', '{{C_SHAPE}}', '{{U_SHAPE}}', '{{OLAS}}'] },
-            'bach_air': { id: "GMkmQlfkNIk", patterns: ['{{GUION}}', '{{OLAS}}', '{{GUION}}', '{{U_SHAPE}}'] },
-            'moscardon': { id: "aYAJopwEYv8", patterns: ['{{BUCLE_E}}', '{{ESPIRAL}}', '{{BUCLE_E}}', '{{MUELLE}}'] },
-            'flores': { id: "QxHk_3yzt3c", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] },
-            'primavera': { id: "l-dYNttdgl0", patterns: ['{{BUCLE_L}}', '{{ROMBOS}}', '{{U_SHAPE}}', '{{BUCLE_L}}'] },
-            'tritsch': { id: "7uV3X8y1YEQ", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] },
-            'badinerie': { id: "xVxwT78V9gw", patterns: ['{{BUCLE_E}}', '{{ROMBOS}}', '{{BUCLE_E}}', '{{ZIGZAG}}'] },
-            'pizzicato': { id: "R_xrkenwf3I", patterns: ['{{GUION}}', '{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}'] },
-            'maquina': { id: "G4nX0Xrn-wo", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}', '{{GUION}}'] },
-            'plink': { id: "e1k3B2d5q5w", patterns: ['{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}', '{{VERT}}'] },
-            'hada': { id: "Wz_f9B4pPtg", patterns: ['{{CIRCLE}}', '{{U_SHAPE}}', '{{CIRCLE}}', '{{ARCH}}'] },
-            'popcorn': { id: "NjxwkZ1s7BA", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] },
-            'rey_montana': { id: "kLp_Hh6DKWc", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{ZIGZAG}}', '{{ESPIRAL}}'] },
-            'pantera': { id: "jBupII3LH_Q", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] },
-            'elephant': { id: "b1z4J_dJ8d4", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] },
-            'esqueletos': { id: "z0glKOLU5iA", patterns: ['{{VERT}}', '{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}'] },
-            'fosiles': { id: "vJ0j3j7j_4g", patterns: ['{{INCL}}', '{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}'] },
-            'hungara': { id: "3X9LvC9WkkQ", patterns: ['{{OLAS}}', '{{ZIGZAG}}', '{{OLAS}}', '{{ZIGZAG}}'] },
-            'cancan': { id: "4DNGMoMNLRY", patterns: ['{{VERT}}', '{{INCL}}', '{{VERT}}', '{{INCL}}'] },
-            'gladiadores': { id: "_B0CyOAO8y0", patterns: ['{{ESPIRAL}}', '{{OLAS}}', '{{ESPIRAL}}', '{{OLAS}}'] }
+            'marcha_turca': { name: "Marcha Turca (Mozart)", link: "https://www.youtube.com/watch?v=7bCl6MnQ8bw", patterns: ['{{ZIGZAG}}', '{{VERT}}', '{{ALMENA}}', '{{ZIGZAG}}'] },
+            'radetzky': { name: "Marcha Radetzky", link: "https://www.youtube.com/watch?v=XzP2ThLUSCk", patterns: ['{{VERT}}', '{{GUION}}', '{{L_SHAPE}}', '{{VERT}}'] },
+            'toreros': { name: "Marcha Toreros (Carmen)", link: "https://www.youtube.com/watch?v=4DNGMoMNLRY", patterns: ['{{ALMENA}}', '{{L_SHAPE}}', '{{VERT}}', '{{ALMENA}}'] },
+            'guillermo_tell': { name: "Guillermo Tell (Finale)", link: "https://www.youtube.com/watch?v=YIbYCOiETx0", patterns: ['{{INCL}}', '{{GUION}}', '{{INCL}}', '{{VERT}}'] },
+            'sable': { name: "Danza del Sable", link: "https://www.youtube.com/watch?v=gqg3l3r_DRI", patterns: ['{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}', '{{VERT}}'] },
+            'montescos': { name: "Montescos y Capuletos", link: "https://www.youtube.com/watch?v=Z_hOR50u7ek", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{VERT}}', '{{GUION}}'] },
+            'danubio': { name: "El Danubio Azul", link: "https://www.youtube.com/watch?v=dJCwYESbFOw", patterns: ['{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}', '{{OLAS}}'] },
+            'cisne': { name: "El Cisne (Saint-Saëns)", link: "https://www.youtube.com/watch?v=3qrKjywjo7Q", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
+            'acuario': { name: "Acuario (Saint-Saëns)", link: "https://www.youtube.com/watch?v=AsD0FDLOKGA", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
+            'manana': { name: "La Mañana (Grieg)", link: "https://www.youtube.com/watch?v=-rh8gMvzKw0", patterns: ['{{ARCH}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ARCH}}'] },
+            'thais': { name: "Meditación de Thais", link: "https://www.youtube.com/watch?v=PGd4rs-b6IA", patterns: ['{{OLAS}}', '{{C_SHAPE}}', '{{U_SHAPE}}', '{{OLAS}}'] },
+            'bach_air': { name: "Air on G String", link: "https://www.youtube.com/watch?v=GMkmQlfkNIk", patterns: ['{{GUION}}', '{{OLAS}}', '{{GUION}}', '{{U_SHAPE}}'] },
+            'moscardon': { name: "El Vuelo del Moscardón", link: "https://www.youtube.com/watch?v=aYAJopwEYv8", patterns: ['{{BUCLE_E}}', '{{ESPIRAL}}', '{{BUCLE_E}}', '{{MUELLE}}'] },
+            'flores': { name: "Vals de las Flores", link: "https://www.youtube.com/watch?v=QxHk_3yzt3c", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] },
+            'primavera': { name: "La Primavera (Vivaldi)", link: "https://www.youtube.com/watch?v=l-dYNttdgl0", patterns: ['{{BUCLE_L}}', '{{ROMBOS}}', '{{U_SHAPE}}', '{{BUCLE_L}}'] },
+            'tritsch': { name: "Tritsch-Tratsch Polka", link: "https://www.youtube.com/watch?v=7uV3X8y1YEQ", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] },
+            'badinerie': { name: "Badinerie (Bach)", link: "https://www.youtube.com/watch?v=xVxwT78V9gw", patterns: ['{{BUCLE_E}}', '{{ROMBOS}}', '{{BUCLE_E}}', '{{ZIGZAG}}'] },
+            'pizzicato': { name: "Pizzicato Polka", link: "https://www.youtube.com/watch?v=R_xrkenwf3I", patterns: ['{{GUION}}', '{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}'] },
+            'maquina': { name: "La Máquina de Escribir", link: "https://www.youtube.com/watch?v=G4nX0Xrn-wo", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}', '{{GUION}}'] },
+            'plink': { name: "Plink, Plank, Plunk", link: "https://www.youtube.com/watch?v=e1k3B2d5q5w", patterns: ['{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}', '{{VERT}}'] },
+            'hada': { name: "Danza Hada de Azúcar", link: "https://www.youtube.com/watch?v=Wz_f9B4pPtg", patterns: ['{{CIRCLE}}', '{{U_SHAPE}}', '{{CIRCLE}}', '{{ARCH}}'] },
+            'popcorn': { name: "Popcorn", link: "https://www.youtube.com/watch?v=NjxwkZ1s7BA", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] },
+            'rey_montana': { name: "Rey de la Montaña", link: "https://www.youtube.com/watch?v=kLp_Hh6DKWc", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{ZIGZAG}}', '{{ESPIRAL}}'] },
+            'pantera': { name: "Pantera Rosa", link: "https://www.youtube.com/watch?v=jBupII3LH_Q", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] },
+            'elephant': { name: "Baby Elephant Walk", link: "https://www.youtube.com/watch?v=b1z4J_dJ8d4", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] },
+            'esqueletos': { name: "Marcha de Esqueletos", link: "https://www.youtube.com/watch?v=z0glKOLU5iA", patterns: ['{{VERT}}', '{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}'] },
+            'fosiles': { name: "Fósiles (Saint-Saëns)", link: "https://www.youtube.com/watch?v=vJ0j3j7j_4g", patterns: ['{{INCL}}', '{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}'] },
+            'hungara': { name: "Danza Húngara No. 5", link: "https://www.youtube.com/watch?v=3X9LvC9WkkQ", patterns: ['{{OLAS}}', '{{ZIGZAG}}', '{{OLAS}}', '{{ZIGZAG}}'] },
+            'cancan': { name: "Can Can", link: "https://www.youtube.com/watch?v=4DNGMoMNLRY", patterns: ['{{VERT}}', '{{INCL}}', '{{VERT}}', '{{INCL}}'] },
+            'gladiadores': { name: "Entrada Gladiadores", link: "https://www.youtube.com/watch?v=_B0CyOAO8y0", patterns: ['{{ESPIRAL}}', '{{OLAS}}', '{{ESPIRAL}}', '{{OLAS}}'] }
         };
 
         let selectedColor = '#000000'; 
-        let maxLinesDynamic = 13;
         let audioCtx = null;
         let metronomeInterval = null;
         let isMetronomeOn = false;
@@ -445,7 +424,9 @@
         // REFERENCIAS
         const els = {
             input: document.getElementById('inputText'),
+            sheet: document.getElementById('sheet'),
             container: document.getElementById('linesContainer'),
+            headerContainer: document.getElementById('headerContainer'),
             headerTitle: document.getElementById('headerTitleDisplay'),
             studentName: document.getElementById('studentNameDisplay'),
             schoolInput: document.getElementById('schoolName'),
@@ -466,28 +447,24 @@
             bpmInput: document.getElementById('bpmInput'),
             metroBtn: document.getElementById('metroBtn'),
             checkHeader: document.getElementById('toggleHeader'),
-            headerContainer: document.getElementById('headerContainer'),
             headerInputs: document.getElementById('headerInputs'),
             checkGrayscale: document.getElementById('toggleGrayscale')
         };
 
         // --- CÁLCULO DE CAPACIDAD DINÁMICA ---
         function calculateCapacity(currentSize, paperType) {
-            // Altura total disponible para contenido
-            const totalH = 1056; // 11in en 96dpi
-            const padH = 96; // 1in total padding
+            const totalH = 1056; 
+            const padH = 96; 
             const footerH = 20; 
             const headerH = els.checkHeader.checked ? 95 : 0;
             const availableH = totalH - padH - headerH - footerH;
             
-            // Altura del renglón según papel
             let rowH = currentSize;
             if (paperType === 'bg-grid') {
                 rowH = Math.max(20, Math.ceil(currentSize / 20) * 20);
             } else if (paperType !== 'bg-blank') {
                 rowH = 60; // Fijo para pautas
             }
-            
             return Math.floor(availableH / rowH);
         }
 
@@ -523,7 +500,7 @@
             }
 
             // Calcular capacidad real
-            maxLinesDynamic = calculateCapacity(sizeVal, paperType);
+            const maxLinesDynamic = calculateCapacity(sizeVal, paperType);
             
             els.container.innerHTML = '';
             const lines = els.input.value.split('\n');
@@ -582,8 +559,6 @@
                 const svgContent = `<svg viewBox="0 0 40 60" preserveAspectRatio="none" style="height:100%; width:auto; stroke:${color}; stroke-width:${els.weight.value}; fill:none; opacity:${opacity}; display:block;">${svgPaths[content]}</svg>`;
                 const svgContainer = document.createElement('div');
                 svgContainer.className = 'row-svg';
-                
-                // Llenar ancho
                 let html = '';
                 for(let k=0; k<25; k++) html += svgContent;
                 svgContainer.innerHTML = html;
@@ -636,7 +611,6 @@
         function addGraphic(tag) { els.input.value += (els.input.value ? '\n' : '') + tag; render(); }
         
         function fillRemaining() {
-            // Simplified fill logic just adding more lines and letting render cut off
             for(let i=0; i<10; i++) els.input.value += '\n{{OLAS}}';
             render();
         }
@@ -689,9 +663,8 @@
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 const bpm = parseInt(els.bpmInput.value) || 60;
-                const intervalMs = 60000 / bpm;
                 playClick();
-                metronomeInterval = setInterval(playClick, intervalMs);
+                metronomeInterval = setInterval(playClick, 60000 / bpm);
                 els.metroBtn.textContent = "⏹";
                 isMetronomeOn = true;
             }
@@ -739,7 +712,11 @@
             }
         }
 
-        document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('input', render));
+        // Eventos en tiempo real
+        const inputsUI = document.querySelectorAll('input, select, textarea');
+        inputsUI.forEach(el => {
+            el.addEventListener('input', render);
+        });
         
         loadState();
         if(!els.input.value) fillPage('mix');
