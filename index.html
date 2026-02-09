@@ -3,71 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Entrenador Caligrafía v24</title>
+    <title>Entrenador Caligrafía v25</title>
     
     <!-- FUENTES -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        /* =========================================
-           ESTILOS DE IMPRESIÓN (PDF FIX)
-           ========================================= */
+        /* --- ESTILOS DE IMPRESIÓN --- */
         @media print {
-            @page {
-                size: letter;
-                margin: 0; /* Sin márgenes del navegador */
+            @page { margin: 0; size: letter; }
+            body { background: white; padding: 0; margin: 0; }
+            .no-print, #mobileTabs, #panelConfig, .refresh-btn { display: none !important; }
+            #panelPreview { 
+                display: block !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                height: 100% !important; 
+                overflow: hidden !important; 
+                border: none !important;
             }
-
-            /* Ocultar TODO lo que no sea la hoja */
-            body * {
-                visibility: hidden;
-            }
-
-            /* Hacer visible solo la hoja y su contenido */
-            #sheet, #sheet * {
-                visibility: visible;
-            }
-
-            /* Posicionar la hoja para cubrir toda la página impresa */
-            #sheet {
-                position: fixed;
-                left: 0;
-                top: 0;
+            .sheet { 
+                box-shadow: none !important; 
+                margin: 0 auto !important; 
                 width: 8.5in !important;
                 height: 11in !important;
-                margin: 0 !important;
-                padding: 0.5in 0.7in !important; /* Márgenes internos del papel */
-                
-                /* Forzar apariencia de papel */
-                background-color: white !important;
-                box-shadow: none !important;
-                z-index: 99999;
-                
-                /* Evitar hoja 2 */
+                max-height: 11in !important;
                 overflow: hidden !important;
-                max-height: 100vh !important;
                 page-break-after: avoid !important;
+                page-break-inside: avoid !important;
             }
-
-            /* Forzar impresión de colores de fondo (líneas) */
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
-            
-            /* Ocultar botones y scrollbars */
-            ::-webkit-scrollbar { display: none; }
+            /* Forzar modo fotocopia al imprimir si se desea, o respetar colores */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
-        /* --- ESTILOS DE PANTALLA --- */
-        body { 
-            background-color: #111827; /* Fondo oscuro app */
-            color: #e5e7eb;
-        }
-
-        /* HOJA CARTA (Vista Pantalla) */
+        /* --- HOJA CARTA --- */
         .sheet {
             width: 8.5in;
             height: 11in;
@@ -79,42 +49,47 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            color: black; /* Texto negro por defecto en la hoja */
         }
 
-        /* PATRONES DE FONDO */
+        /* PATRONES DE FONDO (Color Normal) */
         .pattern-montessori {
             background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 19px, #bfdbfe 20px, transparent 21px, transparent 39px, #bfdbfe 40px, transparent 41px, transparent 59px, #e5e7eb 60px);
-            background-size: 100% 60px;
-            background-attachment: local;
+            background-size: 100% 60px; background-attachment: local;
         }
         .pattern-double {
             background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 24px, #93c5fd 25px, transparent 26px, transparent 34px, #93c5fd 35px, transparent 36px, transparent 59px, #e5e7eb 60px);
-            background-size: 100% 60px;
-            background-attachment: local;
+            background-size: 100% 60px; background-attachment: local;
         }
         .pattern-lines {
             background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 59px, #9ca3af 60px);
-            background-size: 100% 60px;
-            background-attachment: local;
+            background-size: 100% 60px; background-attachment: local;
         }
         .pattern-grid {
             background-image: linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px;
-            background-attachment: local;
+            background-size: 20px 20px; background-attachment: local;
         }
 
-        /* RENGLONES */
+        /* PATRONES MODO FOTOCOPIA (Grises Fuertes) */
+        .grayscale-mode .pattern-montessori {
+            background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 19px, #6b7280 20px, transparent 21px, transparent 39px, #6b7280 40px, transparent 41px, transparent 59px, #000 60px);
+        }
+        .grayscale-mode .pattern-double {
+            background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 24px, #6b7280 25px, transparent 26px, transparent 34px, #6b7280 35px, transparent 36px, transparent 59px, #000 60px);
+        }
+        .grayscale-mode .text-row { color: black !important; } /* Forzar texto negro */
+        .grayscale-mode .svg-pattern { background-color: black !important; }
+
+        /* --- RENGLONES --- */
         #linesContainer { flex-grow: 1; width: 100%; position: relative; }
         .text-row { width: 100%; height: 60px; line-height: 60px; display: block; box-sizing: border-box; padding-top: 10px; white-space: nowrap; overflow: hidden; }
         .font-cursive { font-family: 'Dancing Script', cursive; padding-left: 8px; }
         .font-print { font-family: 'Lexend', sans-serif; letter-spacing: 1px; }
 
-        /* SVG */
+        /* --- SVG --- */
         .svg-row { height: 60px; width: 100%; overflow: hidden; display: flex; align-items: flex-end; }
         .svg-pattern { width: 100%; height: 60px; display: block; -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x; -webkit-mask-position: bottom left; mask-position: bottom left; background-color: currentColor; }
 
-        /* DEFINICIONES SVG */
+        /* DEFINICIONES SVG (Mismas de v24) */
         .p-verticals { -webkit-mask-size: 15px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='15' height='60' viewBox='0 0 15 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='7.5' y1='15' x2='7.5' y2='45' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E"); }
         .p-slanted { -webkit-mask-size: 15px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='15' height='60' viewBox='0 0 15 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='12' y1='15' x2='3' y2='45' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E"); }
         .p-dash { -webkit-mask-size: 25px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='25' height='60' viewBox='0 0 25 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='2' y1='30' x2='23' y2='30' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E"); }
@@ -134,12 +109,10 @@
         .p-swirl { -webkit-mask-size: 40px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='40' height='60' viewBox='0 0 40 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5,40 C5,25 35,25 35,40 C35,50 15,50 15,35 C15,30 25,30 25,35' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E"); }
         .p-diamonds { -webkit-mask-size: 30px 60px; -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='30' height='60' viewBox='0 0 30 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,32.5 L15,15 L30,32.5 L15,50 L0,32.5' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E"); }
 
-        /* UI */
         .btn-exercise { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; padding: 4px; height: 50px; transition: all 0.2s; border-radius: 6px; }
         .btn-preview { width: 100%; height: 25px; display: block; -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x; -webkit-mask-position: center; mask-position: center; background-color: #e5e7eb; margin-bottom: 2px; }
         details > summary { list-style: none; cursor: pointer; }
         
-        /* Ajustes Mobile */
         @media (max-width: 768px) {
             .sheet { min-width: 8.5in; }
             #previewContainer { height: calc(100vh - 80px); background: #111827; padding: 10px; display: block; overflow: auto; -webkit-overflow-scrolling: touch; }
@@ -155,7 +128,7 @@
 <body class="bg-gray-900 h-screen overflow-hidden flex flex-col md:flex-row font-sans text-gray-100">
 
     <!-- PANEL LATERAL -->
-    <aside id="panelConfig" class="w-full md:w-[420px] bg-gray-900 shadow-xl z-20 flex flex-col h-full md:h-screen overflow-y-auto border-r border-gray-700 hidden md:flex relative">
+    <aside id="panelConfig" class="w-full md:w-[420px] bg-gray-900 text-gray-100 shadow-xl z-20 flex flex-col h-full md:h-screen overflow-y-auto border-r border-gray-700 hidden md:flex relative">
         <div class="p-4 space-y-4 pb-24 md:pb-5">
             <div class="border-b border-gray-700 pb-2 flex justify-between items-center">
                 <div>
@@ -168,14 +141,15 @@
                 </div>
             </div>
 
+            <!-- CONTADOR DE ESPACIO -->
             <div class="bg-gray-800 p-2 rounded border border-gray-600 flex justify-between items-center">
-                <span class="text-xs font-bold text-gray-300 uppercase">Ocupación Hoja:</span>
+                <span class="text-xs font-bold text-gray-300 uppercase">Ocupación:</span>
                 <span id="lineCounter" class="text-xs font-mono font-bold text-green-400">0 / 13</span>
             </div>
 
             <!-- GENERADORES -->
             <div class="bg-gray-800 p-3 rounded-lg border border-gray-700">
-                <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2">Generar Rutina</label>
+                <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2">Rutinas Rápidas</label>
                 <div class="grid grid-cols-5 gap-2">
                     <button onclick="fillPage('rectos')" class="flex flex-col items-center justify-center p-2 bg-blue-900/30 hover:bg-blue-800 border border-blue-800 rounded"><span class="text-lg">📏</span><span class="text-[9px] mt-1 text-blue-200">Rectos</span></button>
                     <button onclick="fillPage('curvas')" class="flex flex-col items-center justify-center p-2 bg-green-900/30 hover:bg-green-800 border border-green-800 rounded"><span class="text-lg">d o</span><span class="text-[9px] mt-1 text-green-200">Curvas</span></button>
@@ -185,7 +159,7 @@
                 </div>
             </div>
 
-            <!-- MANUALES -->
+            <!-- ACORDEONES MANUALES -->
             <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-blue-300 hover:bg-gray-700 flex justify-between select-none">1. Trazos Rectos<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50"><button onclick="addGraphic('{{VERT}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-verticals"></span>||||</button><button onclick="addGraphic('{{INCL}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-slanted"></span>////</button><button onclick="addGraphic('{{GUION}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-dash"></span>----</button><button onclick="addGraphic('{{ALMENA}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-square"></span>Castillo</button><button onclick="addGraphic('{{ZIGZAG}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-zig"></span>ZigZag</button><button onclick="addGraphic('{{L_SHAPE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-l"></span>L L L</button></div></details>
             <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-green-300 hover:bg-gray-700 flex justify-between select-none">2. Curvas<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50"><button onclick="addGraphic('{{U_SHAPE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-u"></span>U U U</button><button onclick="addGraphic('{{ARCH}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-arch"></span>Arcos</button><button onclick="addGraphic('{{C_SHAPE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-c"></span>C C C</button><button onclick="addGraphic('{{C_REV}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-c-rev"></span>C Inv.</button><button onclick="addGraphic('{{CIRCLE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-circle"></span>ooo</button><button onclick="addGraphic('{{J_HOOK}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-j"></span>J J J</button></div></details>
             <details class="group bg-gray-800 rounded-lg border border-gray-700"><summary class="p-2 font-bold text-[10px] uppercase text-orange-300 hover:bg-gray-700 flex justify-between select-none">3. Bucles<span class="transform group-open:rotate-180">▼</span></summary><div class="p-2 grid grid-cols-4 gap-2 bg-gray-900/50"><button onclick="addGraphic('{{BUCLE_E}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-e"></span>elelel</button><button onclick="addGraphic('{{BUCLE_L}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-loop-l"></span>Alto</button><button onclick="addGraphic('{{OLAS}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-waves"></span>Olas</button><button onclick="addGraphic('{{MUELLE}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-spring"></span>Muelle</button><button onclick="addGraphic('{{ESPIRAL}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-swirl"></span>Espiral</button><button onclick="addGraphic('{{ROMBOS}}')" class="btn-exercise bg-gray-800 border border-gray-600 hover:bg-gray-700"><span class="btn-preview p-diamonds"></span>Rombos</button></div></details>
@@ -196,39 +170,54 @@
                  <button onclick="fillRemaining()" class="w-full mt-2 text-xs bg-indigo-700 hover:bg-indigo-600 text-white p-2 rounded font-bold transition">✨ Rellenar Espacio Restante</button>
             </div>
 
-            <!-- CONTROLES -->
+            <!-- AJUSTES Y CONTROLES -->
             <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 space-y-3">
+                
+                <!-- Encabezado / Modo -->
+                <div class="flex justify-between items-center text-[10px] border-b border-gray-700 pb-2">
+                    <label class="flex items-center text-gray-400 font-bold"><input type="checkbox" id="toggleHeader" checked onchange="render()" class="accent-blue-500 mr-1"> Mostrar Encabezado</label>
+                    <label class="flex items-center text-gray-400 font-bold" title="Convierte líneas de color a negro/gris"><input type="checkbox" id="toggleGrayscale" onchange="render()" class="accent-gray-500 mr-1"> Modo Fotocopia</label>
+                </div>
+
                 <div class="grid grid-cols-3 gap-1 text-[10px]">
                     <label class="flex items-center cursor-pointer"><input type="radio" name="practiceMode" value="simple" checked onchange="render()" class="accent-blue-500 mr-1"> Simple</label>
                     <label class="flex items-center cursor-pointer"><input type="radio" name="practiceMode" value="plana" onchange="render()" class="accent-blue-500 mr-1"> Alterno</label>
                     <label class="flex items-center cursor-pointer"><input type="radio" name="practiceMode" value="progressive" onchange="render()" class="accent-blue-500 mr-1"> Progresivo</label>
                 </div>
                 
-                <div class="flex gap-2">
+                <div id="headerInputs" class="flex gap-2">
                     <input type="text" id="schoolName" placeholder="Colegio" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
                     <input type="text" id="studentName" placeholder="Alumno" class="w-1/2 bg-gray-900 border border-gray-600 text-gray-300 text-[10px] rounded p-1">
                 </div>
 
+                <!-- Color -->
                 <div class="flex gap-2 justify-center pt-2 border-t border-gray-700">
-                    <button onclick="setColor('black')" class="w-5 h-5 rounded-full bg-black border border-gray-500"></button>
-                    <button onclick="setColor('#2563eb')" class="w-5 h-5 rounded-full bg-blue-600 border border-gray-500"></button>
-                    <button onclick="setColor('#dc2626')" class="w-5 h-5 rounded-full bg-red-600 border border-gray-500"></button>
-                    <button onclick="setColor('#9ca3af')" class="w-5 h-5 rounded-full bg-gray-400 border border-gray-500"></button>
+                    <button onclick="setColor('black')" class="w-5 h-5 rounded-full bg-black border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('#2563eb')" class="w-5 h-5 rounded-full bg-blue-600 border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('#dc2626')" class="w-5 h-5 rounded-full bg-red-600 border border-gray-500 ring-1 ring-white/20"></button>
+                    <button onclick="setColor('rainbow')" class="w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-red-500 border border-gray-500 ring-1 ring-white/20" title="Alternar Colores"></button>
                 </div>
 
+                <!-- CONTROLES TÉCNICOS -->
                 <div class="grid grid-cols-2 gap-2 border-t border-gray-700 pt-2">
                     <div>
-                        <div class="flex justify-between mb-1"><label class="text-[10px] uppercase font-bold text-gray-400">Opacidad</label><span id="opacityVal" class="text-[9px] font-mono text-blue-300">30%</span></div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-[10px] text-gray-400 uppercase font-bold">Opacidad</label>
+                            <span id="opacityVal" class="text-[9px] font-mono text-blue-300">30%</span>
+                        </div>
                         <input type="range" id="opacityRange" min="10" max="100" value="30" class="w-full h-1 bg-gray-600 rounded accent-blue-400">
                     </div>
                     <div>
-                        <div class="flex justify-between mb-1"><label class="text-[10px] uppercase font-bold text-gray-400">Tamaño</label><span id="sizeVal" class="text-[9px] font-mono text-blue-300">30px</span></div>
+                        <div class="flex justify-between mb-1">
+                            <label class="text-[10px] text-gray-400 uppercase font-bold">Tamaño</label>
+                            <span id="sizeVal" class="text-[9px] font-mono text-blue-300">30px</span>
+                        </div>
                         <input type="range" id="sizeRange" min="16" max="80" value="30" class="w-full h-1 bg-gray-600 rounded accent-blue-400">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                      <div>
-                        <label class="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Papel</label>
+                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Papel</label>
                         <select id="paperSelect" class="w-full bg-gray-900 border border-gray-600 text-gray-300 rounded p-1 text-[10px]">
                             <option value="pattern-montessori">Montessori</option>
                             <option value="pattern-double">Doble Rayada</option>
@@ -237,7 +226,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Fuente</label>
+                        <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Fuente</label>
                         <select id="fontSelect" class="w-full bg-gray-900 border border-gray-600 text-gray-300 rounded p-1 text-[10px]">
                             <option value="font-cursive">Cursiva</option>
                             <option value="font-print">Imprenta</option>
@@ -262,15 +251,20 @@
         <div id="previewContainer" class="flex-1 w-full flex justify-center p-0 md:p-8 overflow-auto">
             <div id="sheet" class="sheet pattern-montessori shadow-2xl origin-top">
                 <div class="flex-grow flex flex-col h-full">
-                    <div class="flex flex-col items-center border-b-2 border-gray-800 pb-2 mb-0 h-[25mm] justify-end flex-shrink-0">
+                    <!-- HEADER AREA (Condicional) -->
+                    <div id="headerContainer" class="flex flex-col items-center border-b-2 border-gray-800 pb-2 mb-0 h-[25mm] justify-end flex-shrink-0 transition-all duration-300 overflow-hidden">
                         <h1 id="headerTitleDisplay" class="text-xl font-bold text-gray-800 uppercase tracking-wide font-sans w-full text-center">Caligrafía</h1>
                         <div class="w-full flex justify-between text-sm text-gray-500 mt-1 font-mono">
                             <span id="studentNameDisplay">Alumno: _________________</span>
                             <span>Fecha: _______</span>
                         </div>
                     </div>
-                    <div id="linesContainer" class="w-full relative flex-grow"></div>
+                    <!-- LINES CONTAINER -->
+                    <div id="linesContainer" class="w-full relative flex-grow">
+                        <!-- BG Pattern applied here dynamically via JS -->
+                    </div>
                 </div>
+                <!-- FOOTER -->
                 <div class="mt-auto pt-1 border-t border-gray-300 text-center flex-shrink-0">
                     <p class="text-[8px] text-gray-400 font-sans">Material educativo creado con el Entrenador de Caligrafía de Juan Miguel Rios Redondo</p>
                 </div>
@@ -302,13 +296,14 @@
         };
 
         let selectedColor = '#000000'; 
-        const MAX_LINES_SAFE = 13; 
+        let maxLinesDynamic = 13;
 
         // --- RENDER LOGIC ---
         const els = {
             input: document.getElementById('inputText'),
             sheet: document.getElementById('sheet'),
             container: document.getElementById('linesContainer'),
+            headerContainer: document.getElementById('headerContainer'),
             headerTitle: document.getElementById('headerTitleDisplay'),
             studentName: document.getElementById('studentNameDisplay'),
             schoolInput: document.getElementById('schoolName'),
@@ -319,15 +314,35 @@
             paper: document.getElementById('paperSelect'),
             font: document.getElementById('fontSelect'),
             opacityVal: document.getElementById('opacityVal'),
-            sizeVal: document.getElementById('sizeVal')
+            sizeVal: document.getElementById('sizeVal'),
+            checkHeader: document.getElementById('toggleHeader'),
+            checkGrayscale: document.getElementById('toggleGrayscale')
         };
 
         function render() {
             saveState();
 
-            els.headerTitle.textContent = els.schoolInput.value || "Caligrafía";
-            els.studentName.textContent = els.studentInput.value ? `Alumno: ${els.studentInput.value}` : "Alumno: _________________";
-            els.container.className = `w-full relative flex-grow ${els.paper.value || 'pattern-montessori'}`;
+            // 1. Configurar Hoja
+            const isGrayscale = els.checkGrayscale.checked;
+            els.sheet.className = `sheet shadow-2xl origin-top ${els.paper.value} ${isGrayscale ? 'grayscale-mode' : ''}`;
+            
+            // 2. Configurar Encabezado
+            const showHeader = els.checkHeader.checked;
+            if (showHeader) {
+                els.headerContainer.style.height = '25mm';
+                els.headerContainer.style.opacity = '1';
+                els.headerContainer.style.marginBottom = '0';
+                els.headerTitle.textContent = els.schoolInput.value || "Caligrafía";
+                els.studentName.textContent = els.studentInput.value ? `Alumno: ${els.studentInput.value}` : "Alumno: _________________";
+                document.getElementById('headerInputs').classList.remove('opacity-50', 'pointer-events-none');
+                maxLinesDynamic = 13; // Espacio estándar
+            } else {
+                els.headerContainer.style.height = '0';
+                els.headerContainer.style.opacity = '0';
+                els.headerContainer.style.marginBottom = '0';
+                document.getElementById('headerInputs').classList.add('opacity-50', 'pointer-events-none');
+                maxLinesDynamic = 15; // Espacio extra ganado
+            }
 
             const sizePx = els.size.value;
             const sizePt = Math.round(sizePx * 0.75);
@@ -348,34 +363,43 @@
                 if (mode === 'plana') cost = 2;
                 if (mode === 'progressive') cost = 3;
 
-                if (usedLines + cost > MAX_LINES_SAFE) break;
+                if (usedLines + cost > maxLinesDynamic) break;
 
                 const isGraphic = !!graphics[line];
                 
+                // Determinación de color
+                let effectiveColor = selectedColor;
+                if (selectedColor === 'rainbow') {
+                    const colors = ['#000000', '#2563eb', '#dc2626'];
+                    effectiveColor = colors[i % 3];
+                }
+                
                 if (mode === 'simple') {
-                    createRow(line, els.opacity.value / 100, isGraphic);
+                    createRow(line, els.opacity.value / 100, isGraphic, effectiveColor);
                 } else if (mode === 'plana') {
-                    createRow(line, els.opacity.value / 100, isGraphic);
-                    createRow(''); 
+                    createRow(line, els.opacity.value / 100, isGraphic, effectiveColor);
+                    createRow('', 0, false, effectiveColor); 
                 } else if (mode === 'progressive') {
-                    createRow(line, 1, isGraphic); 
-                    createRow(line, 0.2, isGraphic); 
-                    createRow(''); 
+                    createRow(line, 1, isGraphic, effectiveColor); 
+                    createRow(line, 0.2, isGraphic, effectiveColor); 
+                    createRow('', 0, false, effectiveColor); 
                 }
                 
                 usedLines += cost;
             }
 
-            els.counter.textContent = `${usedLines} / ${MAX_LINES_SAFE}`;
-            els.counter.className = usedLines >= MAX_LINES_SAFE ? "text-xs font-mono font-bold text-red-400" : "text-xs font-mono font-bold text-green-400";
+            els.counter.textContent = `${usedLines} / ${maxLinesDynamic}`;
+            els.counter.className = usedLines >= maxLinesDynamic ? "text-xs font-mono font-bold text-red-400" : "text-xs font-mono font-bold text-green-400";
         }
 
-        function createRow(content, opacity = 1, isPattern = false) {
+        function createRow(content, opacity = 1, isPattern = false, color = '#000000') {
             const div = document.createElement('div');
+            // Si está en modo fotocopia, forzar negro
+            const finalColor = els.checkGrayscale.checked ? '#000000' : color;
             
             if (isPattern) {
                 div.className = 'svg-row';
-                div.innerHTML = `<div class="svg-pattern ${graphics[content]}" style="opacity:${opacity}; background-color:${selectedColor}"></div>`;
+                div.innerHTML = `<div class="svg-pattern ${graphics[content]}" style="opacity:${opacity}; background-color:${finalColor}"></div>`;
             } else if (!content) {
                 div.className = 'text-row';
                 div.innerHTML = '&nbsp;';
@@ -384,7 +408,7 @@
                 const span = document.createElement('span');
                 span.className = `text-row ${font}`;
                 span.textContent = content;
-                span.style.color = selectedColor;
+                span.style.color = finalColor;
                 span.style.opacity = opacity;
                 span.style.fontSize = els.size.value + 'px';
                 div.appendChild(span);
@@ -392,11 +416,17 @@
             els.container.appendChild(div);
         }
 
+        // --- ACTIONS ---
         function addGraphic(tag) {
             const currentLines = els.input.value.split('\n').filter(l => l).length;
             const mode = document.querySelector('input[name="practiceMode"]:checked').value;
             const cost = mode === 'progressive' ? 3 : (mode === 'plana' ? 2 : 1);
-            if ((currentLines + 1) * cost > MAX_LINES_SAFE) { alert("¡Hoja llena!"); return; }
+            
+            if ((currentLines + 1) * cost > maxLinesDynamic) {
+                alert("¡Hoja llena! No caben más ejercicios.");
+                return;
+            }
+            
             els.input.value += (els.input.value ? '\n' : '') + tag;
             render();
         }
@@ -404,9 +434,11 @@
         function fillPage(type) {
             const mode = document.querySelector('input[name="practiceMode"]:checked').value;
             let cost = mode === 'progressive' ? 3 : (mode === 'plana' ? 2 : 1);
-            let availableSlots = Math.floor(MAX_LINES_SAFE / cost);
+            let availableSlots = Math.floor(maxLinesDynamic / cost);
+            
             let content = "";
             let list = categories[type];
+            
             for(let i=0; i<availableSlots; i++) {
                 content += list[i % list.length] + (i < availableSlots-1 ? '\n' : '');
             }
@@ -420,26 +452,37 @@
             const cost = mode === 'progressive' ? 3 : (mode === 'plana' ? 2 : 1);
             const lines = els.input.value.split('\n').filter(x => x.trim() !== '');
             const usedSlots = lines.length;
-            const maxSlots = Math.floor(MAX_LINES_SAFE / cost);
+            const maxSlots = Math.floor(maxLinesDynamic / cost);
             const remaining = maxSlots - usedSlots;
-            if (remaining <= 0) { alert("La hoja ya está llena."); return; }
-            for(let i=0; i<remaining; i++) els.input.value += '\n{{OLAS}}';
+
+            if (remaining <= 0) {
+                alert("La hoja ya está llena.");
+                return;
+            }
+
+            for(let i=0; i<remaining; i++) {
+                els.input.value += '\n{{OLAS}}';
+            }
             render();
         }
 
-        function resetAll() { els.input.value = ''; render(); }
+        function resetAll() {
+            els.input.value = '';
+            render();
+        }
         function setColor(c) { selectedColor = c; render(); }
         function switchTab(t) {
             if(t==='config') { document.getElementById('panelConfig').classList.remove('hidden'); document.getElementById('panelPreview').classList.add('hidden'); document.getElementById('panelPreview').classList.remove('flex'); }
             else { document.getElementById('panelConfig').classList.add('hidden'); document.getElementById('panelPreview').classList.remove('hidden'); document.getElementById('panelPreview').classList.add('flex'); }
         }
 
+        // --- MANEJO DE ESTADO ---
         function saveState() {
             const state = {
                 text: els.input.value, size: els.size.value, opacity: els.opacity.value,
                 font: els.font.value, paper: els.paper.value, school: els.schoolInput.value,
                 student: els.studentInput.value, mode: document.querySelector('input[name="practiceMode"]:checked').value,
-                color: selectedColor
+                color: selectedColor, showHeader: els.checkHeader.checked, grayscale: els.checkGrayscale.checked
             };
             localStorage.setItem('caligrafiaState', JSON.stringify(state));
         }
@@ -456,11 +499,15 @@
                 if(state.school) els.schoolInput.value = state.school;
                 if(state.student) els.studentInput.value = state.student;
                 if(state.color) selectedColor = state.color;
-                if(state.mode) { document.querySelector(`input[name="practiceMode"][value="${state.mode}"]`).checked = true; }
+                if(state.mode) document.querySelector(`input[name="practiceMode"][value="${state.mode}"]`).checked = true;
+                if(state.showHeader !== undefined) els.checkHeader.checked = state.showHeader;
+                if(state.grayscale !== undefined) els.checkGrayscale.checked = state.grayscale;
             }
         }
 
         document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('input', render));
+        
+        // Init
         loadState();
         if(!els.input.value) fillPage('mix');
         if(window.innerWidth < 768) switchTab('preview');
