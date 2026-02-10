@@ -126,7 +126,7 @@
 
             <!-- SECCIÓN MUSICAL -->
             <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-800 shadow-inner">
-                <label class="text-[10px] text-indigo-300 uppercase font-bold block mb-2">🎵 Repertorio Musical (Videos Corregidos)</label>
+                <label class="text-[10px] text-indigo-300 uppercase font-bold block mb-2">🎵 Repertorio Musical (30 Obras)</label>
                 <div class="flex gap-2 mb-3">
                     <select id="songSelect" class="w-full bg-gray-900 border border-gray-600 text-gray-200 rounded p-1 text-xs focus:ring-2 focus:ring-indigo-500">
                         <option value="">-- Selecciona Obra --</option>
@@ -140,32 +140,32 @@
                         </optgroup>
                         <optgroup label="2. Curvas y Ondas">
                             <option value="danubio">7. El Danubio Azul</option>
-                            <option value="cisne">8. El Cisne (Saint-Saëns)</option>
+                            <option value="cisne">8. El Cisne</option>
                             <option value="acuario">9. Acuario</option>
-                            <option value="manana">10. La Mañana (Grieg)</option>
-                            <option value="thais">11. Meditación de Thais</option>
-                            <option value="bach_air">12. Air on G String</option>
+                            <option value="clair_lune">10. Claro de Luna (Debussy)</option>
+                            <option value="nocturne">11. Nocturno (Chopin)</option>
+                            <option value="ave_maria">12. Ave Maria (Schubert)</option>
                         </optgroup>
                         <optgroup label="3. Bucles y Espirales">
                             <option value="moscardon">13. Vuelo del Moscardón</option>
                             <option value="flores">14. Vals de las Flores</option>
                             <option value="primavera">15. La Primavera</option>
-                            <option value="tritsch">16. Tritsch-Tratsch Polka</option>
-                            <option value="badinerie">17. Badinerie</option>
+                            <option value="eine_kleine">16. Pequeña Serenata (Mozart)</option>
+                            <option value="sinfonia40">17. Sinfonía 40 (Mozart)</option>
                         </optgroup>
                         <optgroup label="4. Puntos y Staccato">
                             <option value="pizzicato">18. Pizzicato Polka</option>
                             <option value="maquina">19. Máquina de Escribir</option>
-                            <option value="plink">20. Plink, Plank, Plunk</option>
+                            <option value="annen">20. Annen Polka</option>
                             <option value="hada">21. Hada de Azúcar</option>
                             <option value="popcorn">22. Popcorn</option>
                         </optgroup>
                         <optgroup label="5. Mixtos">
                             <option value="rey_montana">23. Rey de la Montaña</option>
                             <option value="pantera">24. Pantera Rosa</option>
-                            <option value="elephant">25. Baby Elephant Walk</option>
-                            <option value="esqueletos">26. Marcha Esqueletos</option>
-                            <option value="fosiles">27. Fósiles</option>
+                            <option value="humoresque">25. Humoresque (Dvorak)</option>
+                            <option value="brujo">26. Aprendiz de Brujo</option>
+                            <option value="1812">27. Obertura 1812</option>
                             <option value="hungara">28. Danza Húngara 5</option>
                             <option value="cancan">29. Can Can</option>
                             <option value="gladiadores">30. Gladiadores</option>
@@ -186,7 +186,7 @@
 
             <!-- CONTADOR -->
             <div class="bg-gray-800 p-2 rounded border border-gray-600 flex justify-between items-center">
-                <span class="text-xs font-bold text-gray-300 uppercase">Capacidad:</span>
+                <span class="text-xs font-bold text-gray-300 uppercase">Capacidad Hoja:</span>
                 <span id="lineCounter" class="text-xs font-mono font-bold text-green-400">0 / --</span>
             </div>
 
@@ -359,27 +359,27 @@
             'sable': { id: "gqg3l3r_DRI", name: "Danza del Sable", patterns: ['{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}', '{{VERT}}'] },
             'montescos': { id: "Z_hOR50u7ek", name: "Montescos y Capuletos", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{VERT}}', '{{GUION}}'] },
             'danubio': { id: "dJCwYESbFOw", name: "El Danubio Azul", patterns: ['{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}', '{{OLAS}}'] },
-            'cisne': { id: "3qrKjywjo7Q", name: "El Cisne (Saint-Saëns)", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
-            'acuario': { id: "AsD0FDLOKGA", name: "Acuario (Saint-Saëns)", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
-            'manana': { id: "wCEzh3MwQI4", name: "La Mañana (Grieg)", patterns: ['{{ARCH}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ARCH}}'] }, /* Enlace corregido */
-            'thais': { id: "Oh-o3udImy8", name: "Meditación de Thais", patterns: ['{{OLAS}}', '{{C_SHAPE}}', '{{U_SHAPE}}', '{{OLAS}}'] }, /* Enlace corregido */
-            'bach_air': { id: "pzwyJk8hY-k", name: "Air on G String", patterns: ['{{GUION}}', '{{OLAS}}', '{{GUION}}', '{{U_SHAPE}}'] }, /* Enlace corregido */
+            'cisne': { id: "3qrKjywjo7Q", name: "El Cisne", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
+            'acuario': { id: "AsD0FDLOKGA", name: "Acuario", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
+            'clair_lune': { id: "ea2WoUtbzuw", name: "Claro de Luna", patterns: ['{{OLAS}}', '{{ARCH}}', '{{C_SHAPE}}', '{{OLAS}}'] },
+            'nocturne': { id: "9E6b3swbnWg", name: "Nocturno", patterns: ['{{U_SHAPE}}', '{{C_REV}}', '{{OLAS}}', '{{U_SHAPE}}'] },
+            'ave_maria': { id: "2bosouX_d8Y", name: "Ave Maria", patterns: ['{{ARCH}}', '{{OLAS}}', '{{ARCH}}', '{{OLAS}}'] },
             'moscardon': { id: "aYAJopwEYv8", name: "Vuelo del Moscardón", patterns: ['{{BUCLE_E}}', '{{ESPIRAL}}', '{{BUCLE_E}}', '{{MUELLE}}'] },
-            'flores': { id: "GC7PycSBILc", name: "Vals de las Flores", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] }, /* Enlace corregido */
+            'flores': { id: "QxHk_3yzt3c", name: "Vals de las Flores", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] },
             'primavera': { id: "l-dYNttdgl0", name: "La Primavera", patterns: ['{{BUCLE_L}}', '{{ROMBOS}}', '{{U_SHAPE}}', '{{BUCLE_L}}'] },
-            'tritsch': { id: "WqgL0f8m874", name: "Tritsch-Tratsch Polka", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] }, /* Enlace corregido */
-            'badinerie': { id: "klPZIGQcrHA", name: "Badinerie (Bach)", patterns: ['{{BUCLE_E}}', '{{ROMBOS}}', '{{BUCLE_E}}', '{{ZIGZAG}}'] }, /* Enlace corregido */
+            'eine_kleine': { id: "o1FSN8_pp_o", name: "Pequeña Serenata", patterns: ['{{BUCLE_L}}', '{{ROMBOS}}', '{{ZIGZAG}}', '{{BUCLE_L}}'] },
+            'sinfonia40': { id: "JTc1mDieQI8", name: "Sinfonía 40", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] },
             'pizzicato': { id: "R_xrkenwf3I", name: "Pizzicato Polka", patterns: ['{{GUION}}', '{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}'] },
             'maquina': { id: "G4nX0Xrn-wo", name: "La Máquina de Escribir", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}', '{{GUION}}'] },
-            'plink': { id: "7N_9c2_F2Dk", name: "Plink, Plank, Plunk", patterns: ['{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}', '{{VERT}}'] }, /* Enlace corregido */
+            'annen': { id: "45aW6Jv4C7U", name: "Annen Polka", patterns: ['{{GUION}}', '{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}'] },
             'hada': { id: "Wz_f9B4pPtg", name: "Hada de Azúcar", patterns: ['{{CIRCLE}}', '{{U_SHAPE}}', '{{CIRCLE}}', '{{ARCH}}'] },
-            'popcorn': { id: "OSRCemf2JHc", name: "Popcorn", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] }, /* Enlace corregido */
+            'popcorn': { id: "NjxwkZ1s7BA", name: "Popcorn", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] },
             'rey_montana': { id: "kLp_Hh6DKWc", name: "Rey de la Montaña", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{ZIGZAG}}', '{{ESPIRAL}}'] },
-            'pantera': { id: "HhHwnrlZRus", name: "Pantera Rosa", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] }, /* Enlace corregido */
-            'elephant': { id: "qJO5_5i6h0w", name: "Baby Elephant Walk", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] }, /* Enlace corregido */
-            'esqueletos': { id: "YyO7SaFnk7Y", name: "Marcha Esqueletos", patterns: ['{{VERT}}', '{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}'] }, /* Enlace corregido */
-            'fosiles': { id: "HTq3XYp3ZMc", name: "Fósiles (Saint-Saëns)", patterns: ['{{INCL}}', '{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}'] }, /* Enlace corregido */
-            'hungara': { id: "3X9LvC9WkkQ", name: "Danza Húngara No. 5", patterns: ['{{OLAS}}', '{{ZIGZAG}}', '{{OLAS}}', '{{ZIGZAG}}'] },
+            'pantera': { id: "jBupII3LH_Q", name: "Pantera Rosa", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] },
+            'humoresque': { id: "oSDQz-c8kXE", name: "Humoresque", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] },
+            'brujo': { id: "U4yH4B9deok", name: "Aprendiz de Brujo", patterns: ['{{VERT}}', '{{ESPIRAL}}', '{{VERT}}', '{{ESPIRAL}}'] },
+            '1812': { id: "VbxgYlcNxE8", name: "Obertura 1812", patterns: ['{{INCL}}', '{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}'] },
+            'hungara': { id: "3X9LvC9WkkQ", name: "Danza Húngara 5", patterns: ['{{OLAS}}', '{{ZIGZAG}}', '{{OLAS}}', '{{ZIGZAG}}'] },
             'cancan': { id: "4DNGMoMNLRY", name: "Can Can", patterns: ['{{VERT}}', '{{INCL}}', '{{VERT}}', '{{INCL}}'] },
             'gladiadores': { id: "_B0CyOAO8y0", name: "Entrada Gladiadores", patterns: ['{{ESPIRAL}}', '{{OLAS}}', '{{ESPIRAL}}', '{{OLAS}}'] }
         };
