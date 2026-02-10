@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Entrenador De Caligrafía </title>
+    <title>Entrenador Caligrafía v42</title>
     
     <!-- FUENTES -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
@@ -33,26 +33,18 @@
         .sheet {
             width: 8.5in; min-height: 11in; background-color: white; position: relative;
             padding: 0.5in 0.7in; box-sizing: border-box; margin: 0 auto; color: black;
-            /* El fondo se aplica al contenedor principal para que sea continuo */
         }
 
         /* --- FONDOS DE PAPEL (FIJOS) --- */
-        
-        /* Cuadrícula Fija de 20px (No cambia con el slider) */
         .bg-grid {
             background-image: linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
             background-size: 20px 20px; 
-            background-position: 0 10px; /* Ajuste vertical para coincidir con base */
+            background-position: 0 10px; 
         }
-
-        /* Rayado: La línea está fija visualmente al fondo del renglón */
-        /* Usamos background-size 100% var(--row-h) en el renglón individual */
         .pattern-line-css {
             background-image: linear-gradient(to bottom, transparent calc(100% - 1px), #9ca3af calc(100% - 1px));
             background-size: 100% 100%;
         }
-
-        /* Blanco */
         .bg-blank { background: none; border-bottom: 1px dashed #f9fafb; }
 
         /* MODO FOTOCOPIA */
@@ -62,12 +54,10 @@
         /* --- RENGLONES --- */
         .dynamic-row {
             width: 100%;
-            /* Altura controlada por slider */
             height: var(--row-h); 
             position: relative;
             display: flex;
-            align-items: flex-end; /* Alinear contenido al fondo */
-            /* Padding bottom exacto para que la letra se asiente sobre la línea */
+            align-items: flex-end; 
             padding-bottom: 8px; 
             box-sizing: border-box;
         }
@@ -80,7 +70,6 @@
             white-space: pre-wrap; 
             word-break: break-word;
             z-index: 10;
-            /* Ajuste fino para tipografía */
             transform: translateY(2px); 
         }
         .font-cursive { font-family: 'Dancing Script', cursive; }
@@ -90,7 +79,6 @@
         .row-svg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; align-items: center; overflow: hidden; pointer-events: none;
-            /* El SVG se centra verticalmente, pero su base debe coincidir */
             padding-bottom: 8px; 
             box-sizing: border-box;
         }
@@ -146,7 +134,7 @@
                         <option value="">-- Selecciona Obra --</option>
                         <optgroup label="1. Rectos y Marcados">
                             <option value="radetzky">1. Marcha Radetzky</option>
-                            <option value="marcha_turca">2. Marcha Turca (Mozart)</option>
+                            <option value="marcha_turca">2. Marcha Turca</option>
                             <option value="guillermo_tell">3. Guillermo Tell</option>
                             <option value="toreros">4. Marcha Toreros</option>
                             <option value="sable">5. Danza del Sable</option>
@@ -362,39 +350,40 @@
         };
 
         const musicRep = {
-            'marcha_turca': { name: "Marcha Turca (Mozart)", link: "https://www.youtube.com/watch?v=7bCl6MnQ8bw", patterns: ['{{ZIGZAG}}', '{{VERT}}', '{{ALMENA}}', '{{ZIGZAG}}'] },
-            'radetzky': { name: "Marcha Radetzky", link: "https://www.youtube.com/watch?v=XzP2ThLUSCk", patterns: ['{{VERT}}', '{{GUION}}', '{{L_SHAPE}}', '{{VERT}}'] },
-            'toreros': { name: "Marcha Toreros (Carmen)", link: "https://www.youtube.com/watch?v=4DNGMoMNLRY", patterns: ['{{ALMENA}}', '{{L_SHAPE}}', '{{VERT}}', '{{ALMENA}}'] },
-            'guillermo_tell': { name: "Guillermo Tell (Finale)", link: "https://www.youtube.com/watch?v=YIbYCOiETx0", patterns: ['{{INCL}}', '{{GUION}}', '{{INCL}}', '{{VERT}}'] },
-            'sable': { name: "Danza del Sable", link: "https://www.youtube.com/watch?v=gqg3l3r_DRI", patterns: ['{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}', '{{VERT}}'] },
-            'montescos': { name: "Montescos y Capuletos", link: "https://www.youtube.com/watch?v=Z_hOR50u7ek", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{VERT}}', '{{GUION}}'] },
-            'danubio': { name: "El Danubio Azul", link: "https://www.youtube.com/watch?v=dJCwYESbFOw", patterns: ['{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}', '{{OLAS}}'] },
-            'cisne': { name: "El Cisne (Saint-Saëns)", link: "https://www.youtube.com/watch?v=3qrKjywjo7Q", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
-            'acuario': { name: "Acuario (Saint-Saëns)", link: "https://www.youtube.com/watch?v=AsD0FDLOKGA", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
-            'manana': { name: "La Mañana (Grieg)", link: "https://www.youtube.com/watch?v=-rh8gMvzKw0", patterns: ['{{ARCH}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ARCH}}'] },
-            'thais': { name: "Meditación de Thais", link: "https://www.youtube.com/watch?v=PGd4rs-b6IA", patterns: ['{{OLAS}}', '{{C_SHAPE}}', '{{U_SHAPE}}', '{{OLAS}}'] },
-            'bach_air': { name: "Air on G String", link: "https://www.youtube.com/watch?v=GMkmQlfkNIk", patterns: ['{{GUION}}', '{{OLAS}}', '{{GUION}}', '{{U_SHAPE}}'] },
-            'moscardon': { name: "El Vuelo del Moscardón", link: "https://www.youtube.com/watch?v=aYAJopwEYv8", patterns: ['{{BUCLE_E}}', '{{ESPIRAL}}', '{{BUCLE_E}}', '{{MUELLE}}'] },
-            'flores': { name: "Vals de las Flores", link: "https://www.youtube.com/watch?v=QxHk_3yzt3c", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] },
-            'primavera': { name: "La Primavera (Vivaldi)", link: "https://www.youtube.com/watch?v=l-dYNttdgl0", patterns: ['{{BUCLE_L}}', '{{ROMBOS}}', '{{U_SHAPE}}', '{{BUCLE_L}}'] },
-            'tritsch': { name: "Tritsch-Tratsch Polka", link: "https://www.youtube.com/watch?v=7uV3X8y1YEQ", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] },
-            'badinerie': { name: "Badinerie (Bach)", link: "https://www.youtube.com/watch?v=xVxwT78V9gw", patterns: ['{{BUCLE_E}}', '{{ROMBOS}}', '{{BUCLE_E}}', '{{ZIGZAG}}'] },
-            'pizzicato': { name: "Pizzicato Polka", link: "https://www.youtube.com/watch?v=R_xrkenwf3I", patterns: ['{{GUION}}', '{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}'] },
-            'maquina': { name: "La Máquina de Escribir", link: "https://www.youtube.com/watch?v=G4nX0Xrn-wo", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}', '{{GUION}}'] },
-            'plink': { name: "Plink, Plank, Plunk", link: "https://www.youtube.com/watch?v=e1k3B2d5q5w", patterns: ['{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}', '{{VERT}}'] },
-            'hada': { name: "Danza Hada de Azúcar", link: "https://www.youtube.com/watch?v=Wz_f9B4pPtg", patterns: ['{{CIRCLE}}', '{{U_SHAPE}}', '{{CIRCLE}}', '{{ARCH}}'] },
-            'popcorn': { name: "Popcorn", link: "https://www.youtube.com/watch?v=NjxwkZ1s7BA", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] },
-            'rey_montana': { name: "Rey de la Montaña", link: "https://www.youtube.com/watch?v=kLp_Hh6DKWc", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{ZIGZAG}}', '{{ESPIRAL}}'] },
-            'pantera': { name: "Pantera Rosa", link: "https://www.youtube.com/watch?v=jBupII3LH_Q", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] },
-            'elephant': { name: "Baby Elephant Walk", link: "https://www.youtube.com/watch?v=b1z4J_dJ8d4", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] },
-            'esqueletos': { name: "Marcha de Esqueletos", link: "https://www.youtube.com/watch?v=z0glKOLU5iA", patterns: ['{{VERT}}', '{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}'] },
-            'fosiles': { name: "Fósiles (Saint-Saëns)", link: "https://www.youtube.com/watch?v=vJ0j3j7j_4g", patterns: ['{{INCL}}', '{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}'] },
-            'hungara': { name: "Danza Húngara No. 5", link: "https://www.youtube.com/watch?v=3X9LvC9WkkQ", patterns: ['{{OLAS}}', '{{ZIGZAG}}', '{{OLAS}}', '{{ZIGZAG}}'] },
-            'cancan': { name: "Can Can", link: "https://www.youtube.com/watch?v=4DNGMoMNLRY", patterns: ['{{VERT}}', '{{INCL}}', '{{VERT}}', '{{INCL}}'] },
-            'gladiadores': { name: "Entrada Gladiadores", link: "https://www.youtube.com/watch?v=_B0CyOAO8y0", patterns: ['{{ESPIRAL}}', '{{OLAS}}', '{{ESPIRAL}}', '{{OLAS}}'] }
+            'marcha_turca': { id: "7bCl6MnQ8bw", name: "Marcha Turca (Mozart)", patterns: ['{{ZIGZAG}}', '{{VERT}}', '{{ALMENA}}', '{{ZIGZAG}}'] },
+            'radetzky': { id: "XzP2ThLUSCk", name: "Marcha Radetzky", patterns: ['{{VERT}}', '{{GUION}}', '{{L_SHAPE}}', '{{VERT}}'] },
+            'toreros': { id: "4DNGMoMNLRY", name: "Marcha Toreros", patterns: ['{{ALMENA}}', '{{L_SHAPE}}', '{{VERT}}', '{{ALMENA}}'] },
+            'guillermo_tell': { id: "YIbYCOiETx0", name: "Guillermo Tell", patterns: ['{{INCL}}', '{{GUION}}', '{{INCL}}', '{{VERT}}'] },
+            'sable': { id: "gqg3l3r_DRI", name: "Danza del Sable", patterns: ['{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}', '{{VERT}}'] },
+            'montescos': { id: "Z_hOR50u7ek", name: "Montescos y Capuletos", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{VERT}}', '{{GUION}}'] },
+            'danubio': { id: "dJCwYESbFOw", name: "El Danubio Azul", patterns: ['{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}', '{{OLAS}}'] },
+            'cisne': { id: "3qrKjywjo7Q", name: "El Cisne", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
+            'acuario': { id: "AsD0FDLOKGA", name: "Acuario", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
+            'manana': { id: "-rh8gMvzKw0", name: "La Mañana (Grieg)", patterns: ['{{ARCH}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ARCH}}'] },
+            'thais': { id: "PGd4rs-b6IA", name: "Meditación de Thais", patterns: ['{{OLAS}}', '{{C_SHAPE}}', '{{U_SHAPE}}', '{{OLAS}}'] },
+            'bach_air': { id: "GMkmQlfkNIk", name: "Air on G String", patterns: ['{{GUION}}', '{{OLAS}}', '{{GUION}}', '{{U_SHAPE}}'] },
+            'moscardon': { id: "aYAJopwEYv8", name: "Vuelo del Moscardón", patterns: ['{{BUCLE_E}}', '{{ESPIRAL}}', '{{BUCLE_E}}', '{{MUELLE}}'] },
+            'flores': { id: "QxHk_3yzt3c", name: "Vals de las Flores", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] },
+            'primavera': { id: "l-dYNttdgl0", name: "La Primavera", patterns: ['{{BUCLE_L}}', '{{ROMBOS}}', '{{U_SHAPE}}', '{{BUCLE_L}}'] },
+            'tritsch': { id: "7uV3X8y1YEQ", name: "Tritsch-Tratsch Polka", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] },
+            'badinerie': { id: "xVxwT78V9gw", name: "Badinerie", patterns: ['{{BUCLE_E}}', '{{ROMBOS}}', '{{BUCLE_E}}', '{{ZIGZAG}}'] },
+            'pizzicato': { id: "R_xrkenwf3I", name: "Pizzicato Polka", patterns: ['{{GUION}}', '{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}'] },
+            'maquina': { id: "G4nX0Xrn-wo", name: "La Máquina de Escribir", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}', '{{GUION}}'] },
+            'plink': { id: "e1k3B2d5q5w", name: "Plink, Plank, Plunk", patterns: ['{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}', '{{VERT}}'] },
+            'hada': { id: "Wz_f9B4pPtg", name: "Hada de Azúcar", patterns: ['{{CIRCLE}}', '{{U_SHAPE}}', '{{CIRCLE}}', '{{ARCH}}'] },
+            'popcorn': { id: "NjxwkZ1s7BA", name: "Popcorn", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] },
+            'rey_montana': { id: "kLp_Hh6DKWc", name: "Rey de la Montaña", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{ZIGZAG}}', '{{ESPIRAL}}'] },
+            'pantera': { id: "jBupII3LH_Q", name: "Pantera Rosa", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] },
+            'elephant': { id: "b1z4J_dJ8d4", name: "Baby Elephant Walk", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] },
+            'esqueletos': { id: "z0glKOLU5iA", name: "Marcha Esqueletos", patterns: ['{{VERT}}', '{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}'] },
+            'fosiles': { id: "vJ0j3j7j_4g", name: "Fósiles", patterns: ['{{INCL}}', '{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}'] },
+            'hungara': { id: "3X9LvC9WkkQ", name: "Danza Húngara 5", patterns: ['{{OLAS}}', '{{ZIGZAG}}', '{{OLAS}}', '{{ZIGZAG}}'] },
+            'cancan': { id: "4DNGMoMNLRY", name: "Can Can", patterns: ['{{VERT}}', '{{INCL}}', '{{VERT}}', '{{INCL}}'] },
+            'gladiadores': { id: "_B0CyOAO8y0", name: "Entrada Gladiadores", patterns: ['{{ESPIRAL}}', '{{OLAS}}', '{{ESPIRAL}}', '{{OLAS}}'] }
         };
 
         let selectedColor = '#000000'; 
+        let maxLinesDynamic = 13;
         let audioCtx = null;
         let metronomeInterval = null;
         let isMetronomeOn = false;
@@ -431,6 +420,7 @@
             studentName: document.getElementById('studentNameDisplay'),
             schoolInput: document.getElementById('schoolName'),
             studentInput: document.getElementById('studentName'),
+            counter: document.getElementById('lineCounter'),
             opacity: document.getElementById('opacityRange'),
             size: document.getElementById('sizeRange'),
             weight: document.getElementById('weightRange'),
@@ -439,19 +429,16 @@
             opacityVal: document.getElementById('opacityVal'),
             sizeVal: document.getElementById('sizeVal'),
             weightVal: document.getElementById('weightVal'),
-            lineCounter: document.getElementById('lineCounter'),
-            modal: document.getElementById('pdfLoadingModal'),
-            songSelect: document.getElementById('songSelect'),
-            youtubeContainer: document.getElementById('youtubeContainer'),
-            youtubeLink: document.getElementById('youtubeLink'),
-            bpmInput: document.getElementById('bpmInput'),
-            metroBtn: document.getElementById('metroBtn'),
             checkHeader: document.getElementById('toggleHeader'),
             headerInputs: document.getElementById('headerInputs'),
-            checkGrayscale: document.getElementById('toggleGrayscale')
+            checkGrayscale: document.getElementById('toggleGrayscale'),
+            songSelect: document.getElementById('songSelect'),
+            youtubeContainer: document.getElementById('youtubeContainer'),
+            bpmInput: document.getElementById('bpmInput'),
+            metroBtn: document.getElementById('metroBtn'),
+            modal: document.getElementById('pdfLoadingModal')
         };
 
-        // --- CÁLCULO DE CAPACIDAD DINÁMICA ---
         function calculateCapacity(currentSize, paperType) {
             const totalH = 1056; 
             const padH = 96; 
@@ -468,23 +455,19 @@
             return Math.floor(availableH / rowH);
         }
 
-        // RENDERIZADO
         function render() {
             saveState();
 
-            // Configurar Papel
             const paperType = els.paper.value;
             const isGrayscale = els.checkGrayscale.checked;
             document.getElementById('sheet').className = `sheet shadow-2xl origin-top ${paperType} ${isGrayscale ? 'grayscale-mode' : ''}`;
             
-            // Valores
             const sizeVal = parseInt(els.size.value);
             const pt = Math.round(sizeVal * 0.75);
             els.sizeVal.textContent = `${sizeVal}px (≈${pt}pt)`;
             els.weightVal.textContent = els.weight.value + 'x';
             els.opacityVal.textContent = els.opacity.value + '%';
             
-            // Header Logic
             if (els.checkHeader.checked) {
                 els.headerContainer.style.height = '25mm';
                 els.headerContainer.style.opacity = '1';
@@ -499,8 +482,7 @@
                 els.headerInputs.classList.add('opacity-50', 'pointer-events-none');
             }
 
-            // Calcular capacidad real
-            const maxLinesDynamic = calculateCapacity(sizeVal, paperType);
+            maxLinesDynamic = calculateCapacity(sizeVal, paperType);
             
             els.container.innerHTML = '';
             const lines = els.input.value.split('\n');
@@ -508,15 +490,13 @@
             const mode = document.querySelector('input[name="practiceMode"]:checked').value;
             let usedLines = 0;
 
-            // Determinar altura de renglón
             let rowHeightPx = sizeVal;
             if (paperType === 'bg-grid') {
                  rowHeightPx = Math.max(20, Math.ceil(sizeVal / 20) * 20);
             } else if (paperType !== 'bg-blank') {
-                 rowHeightPx = 60; // Fijo para pautas
+                 rowHeightPx = 60; 
             }
 
-            // Aplicar variables CSS
             document.documentElement.style.setProperty('--row-h', rowHeightPx + 'px');
             document.documentElement.style.setProperty('--font-s', (sizeVal * 0.66) + 'px');
             
@@ -532,7 +512,6 @@
                 if (selectedColor === 'rainbow') effectiveColor = ['#000000', '#2563eb', '#dc2626'][i % 3];
                 const finalColor = isGrayscale ? '#000000' : effectiveColor;
 
-                // Crear filas según modo
                 if (mode === 'simple') {
                     createRow(line, els.opacity.value/100, isGraphic, finalColor, fontClass);
                 } else if (mode === 'plana') {
@@ -597,7 +576,6 @@
             const mode = document.querySelector('input[name="practiceMode"]:checked').value;
             const cost = mode === 'progressive' ? 3 : (mode === 'plana' ? 2 : 1);
             const slots = Math.floor(max / cost);
-
             let content = "";
             let list = categories[type];
             for(let i=0; i<slots; i++) {
@@ -683,7 +661,6 @@
             osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        // Save/Load
         function saveState() {
             const state = {
                 text: els.input.value, size: els.size.value, opacity: els.opacity.value,
@@ -712,11 +689,8 @@
             }
         }
 
-        // Eventos en tiempo real
         const inputsUI = document.querySelectorAll('input, select, textarea');
-        inputsUI.forEach(el => {
-            el.addEventListener('input', render);
-        });
+        inputsUI.forEach(el => { el.addEventListener('input', render); });
         
         loadState();
         if(!els.input.value) fillPage('mix');
@@ -726,3 +700,5 @@
     </script>
 </body>
 </html>
+
+
