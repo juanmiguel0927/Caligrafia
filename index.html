@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Entrenador Caligrafía v42</title>
+    <title>Entrenador De Caligrafía </title>
     
     <!-- FUENTES -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
         :root {
             --row-h: 60px;
             --font-s: 40px;
-            --line-color: #9ca3af;
+            --stroke-w: 1.5px;
         }
 
         body { background-color: #111827; color: #e5e7eb; }
@@ -35,21 +35,19 @@
             padding: 0.5in 0.7in; box-sizing: border-box; margin: 0 auto; color: black;
         }
 
-        /* --- FONDOS DE PAPEL (FIJOS) --- */
+        /* --- FONDOS DE PAPEL (SOLO CUADRÍCULA Y BLANCO) --- */
         .bg-grid {
             background-image: linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px; 
-            background-position: 0 10px; 
-        }
-        .pattern-line-css {
-            background-image: linear-gradient(to bottom, transparent calc(100% - 1px), #9ca3af calc(100% - 1px));
-            background-size: 100% 100%;
+            background-size: 20px 20px !important; 
+            background-position: 0 10px; /* Alineación base */
         }
         .bg-blank { background: none; border-bottom: 1px dashed #f9fafb; }
 
         /* MODO FOTOCOPIA */
         .grayscale-mode .dynamic-row { border-color: black !important; }
-        .grayscale-mode .pattern-line-css { background-image: linear-gradient(to bottom, transparent calc(100% - 1px), #000 calc(100% - 1px)); }
+        .grayscale-mode.bg-grid {
+             background-image: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px);
+        }
 
         /* --- RENGLONES --- */
         .dynamic-row {
@@ -58,7 +56,7 @@
             position: relative;
             display: flex;
             align-items: flex-end; 
-            padding-bottom: 8px; 
+            padding-bottom: 8px; /* Ajuste fino para sentar en línea de cuadrícula */
             box-sizing: border-box;
         }
 
@@ -128,7 +126,7 @@
 
             <!-- SECCIÓN MUSICAL -->
             <div class="bg-indigo-900/30 p-3 rounded-lg border border-indigo-800 shadow-inner">
-                <label class="text-[10px] text-indigo-300 uppercase font-bold block mb-2">🎵 Repertorio Musical</label>
+                <label class="text-[10px] text-indigo-300 uppercase font-bold block mb-2">🎵 Repertorio Musical (Videos Corregidos)</label>
                 <div class="flex gap-2 mb-3">
                     <select id="songSelect" class="w-full bg-gray-900 border border-gray-600 text-gray-200 rounded p-1 text-xs focus:ring-2 focus:ring-indigo-500">
                         <option value="">-- Selecciona Obra --</option>
@@ -142,7 +140,7 @@
                         </optgroup>
                         <optgroup label="2. Curvas y Ondas">
                             <option value="danubio">7. El Danubio Azul</option>
-                            <option value="cisne">8. El Cisne</option>
+                            <option value="cisne">8. El Cisne (Saint-Saëns)</option>
                             <option value="acuario">9. Acuario</option>
                             <option value="manana">10. La Mañana (Grieg)</option>
                             <option value="thais">11. Meditación de Thais</option>
@@ -194,13 +192,18 @@
 
             <!-- GENERADORES -->
             <div class="bg-gray-800 p-3 rounded-lg border border-gray-700">
-                <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2">Trazos Básicos</label>
-                <div class="grid grid-cols-5 gap-2">
-                    <button onclick="fillPage('rectos')" class="p-2 bg-blue-900/30 hover:bg-blue-800 border border-blue-800 rounded flex flex-col items-center"><span class="text-lg">📏</span></button>
-                    <button onclick="fillPage('curvas')" class="p-2 bg-green-900/30 hover:bg-green-800 border border-green-800 rounded flex flex-col items-center"><span class="text-lg">d o</span></button>
-                    <button onclick="fillPage('bucles')" class="p-2 bg-orange-900/30 hover:bg-orange-800 border border-orange-800 rounded flex flex-col items-center"><span class="text-lg">➰</span></button>
-                    <button onclick="fillPage('mix')" class="p-2 bg-purple-900/30 hover:bg-purple-800 border border-purple-800 rounded flex flex-col items-center"><span class="text-lg">🔀</span></button>
-                    <button onclick="fillPage('texto')" class="p-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded flex flex-col items-center"><span class="text-lg">📝</span></button>
+                <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2">Generadores Rápidos</label>
+                <div class="grid grid-cols-6 gap-2">
+                    <button onclick="fillPage('rectos')" class="p-2 bg-blue-900/30 hover:bg-blue-800 border border-blue-800 rounded flex flex-col items-center" title="Rectos"><span class="text-lg">📏</span></button>
+                    <button onclick="fillPage('curvas')" class="p-2 bg-green-900/30 hover:bg-green-800 border border-green-800 rounded flex flex-col items-center" title="Curvas"><span class="text-lg">d o</span></button>
+                    <button onclick="fillPage('bucles')" class="p-2 bg-orange-900/30 hover:bg-orange-800 border border-orange-800 rounded flex flex-col items-center" title="Bucles"><span class="text-lg">➰</span></button>
+                    <button onclick="fillPage('mix')" class="p-2 bg-purple-900/30 hover:bg-purple-800 border border-purple-800 rounded flex flex-col items-center" title="Mix"><span class="text-lg">🔀</span></button>
+                    <button onclick="fillPage('texto')" class="p-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded flex flex-col items-center" title="Texto"><span class="text-lg">📝</span></button>
+                    
+                    <!-- NUEVO BOTÓN ALEATORIO -->
+                    <button onclick="fillPage('random')" class="p-2 bg-red-900/30 hover:bg-red-800 border border-red-800 rounded flex flex-col items-center" title="Aleatorio Total">
+                        <span class="text-lg">🎲</span>
+                    </button>
                 </div>
                 
                 <label class="text-[10px] text-gray-400 uppercase font-bold block mb-2 mt-3 pt-3 border-t border-gray-600">Letras</label>
@@ -260,7 +263,6 @@
                      <div>
                         <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 block">Papel</label>
                         <select id="paperSelect" class="w-full bg-gray-900 border border-gray-600 text-gray-300 rounded p-1 text-[10px]">
-                            <option value="bg-lines">Rayado</option>
                             <option value="bg-grid">Cuadrícula</option>
                             <option value="bg-blank">Blanco</option>
                         </select>
@@ -289,7 +291,7 @@
         </div>
 
         <div id="previewContainer" class="flex-1 w-full flex justify-center p-0 md:p-8 overflow-auto">
-            <div id="sheet" class="sheet bg-lines shadow-2xl origin-top">
+            <div id="sheet" class="sheet bg-grid shadow-2xl origin-top">
                 <div class="flex-grow flex flex-col h-full w-full">
                     <div id="headerContainer" class="flex flex-col items-center border-b-2 border-gray-800 pb-2 mb-0 h-[25mm] justify-end flex-shrink-0 w-full">
                         <h1 id="headerTitleDisplay" class="text-xl font-bold text-gray-800 uppercase tracking-wide font-sans w-full text-center">Caligrafía</h1>
@@ -357,27 +359,27 @@
             'sable': { id: "gqg3l3r_DRI", name: "Danza del Sable", patterns: ['{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}', '{{VERT}}'] },
             'montescos': { id: "Z_hOR50u7ek", name: "Montescos y Capuletos", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{VERT}}', '{{GUION}}'] },
             'danubio': { id: "dJCwYESbFOw", name: "El Danubio Azul", patterns: ['{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}', '{{OLAS}}'] },
-            'cisne': { id: "3qrKjywjo7Q", name: "El Cisne", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
-            'acuario': { id: "AsD0FDLOKGA", name: "Acuario", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
-            'manana': { id: "-rh8gMvzKw0", name: "La Mañana (Grieg)", patterns: ['{{ARCH}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ARCH}}'] },
-            'thais': { id: "PGd4rs-b6IA", name: "Meditación de Thais", patterns: ['{{OLAS}}', '{{C_SHAPE}}', '{{U_SHAPE}}', '{{OLAS}}'] },
-            'bach_air': { id: "GMkmQlfkNIk", name: "Air on G String", patterns: ['{{GUION}}', '{{OLAS}}', '{{GUION}}', '{{U_SHAPE}}'] },
+            'cisne': { id: "3qrKjywjo7Q", name: "El Cisne (Saint-Saëns)", patterns: ['{{U_SHAPE}}', '{{OLAS}}', '{{ARCH}}', '{{U_SHAPE}}'] },
+            'acuario': { id: "AsD0FDLOKGA", name: "Acuario (Saint-Saëns)", patterns: ['{{ESPIRAL}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ESPIRAL}}'] },
+            'manana': { id: "wCEzh3MwQI4", name: "La Mañana (Grieg)", patterns: ['{{ARCH}}', '{{CIRCLE}}', '{{U_SHAPE}}', '{{ARCH}}'] }, /* Enlace corregido */
+            'thais': { id: "Oh-o3udImy8", name: "Meditación de Thais", patterns: ['{{OLAS}}', '{{C_SHAPE}}', '{{U_SHAPE}}', '{{OLAS}}'] }, /* Enlace corregido */
+            'bach_air': { id: "pzwyJk8hY-k", name: "Air on G String", patterns: ['{{GUION}}', '{{OLAS}}', '{{GUION}}', '{{U_SHAPE}}'] }, /* Enlace corregido */
             'moscardon': { id: "aYAJopwEYv8", name: "Vuelo del Moscardón", patterns: ['{{BUCLE_E}}', '{{ESPIRAL}}', '{{BUCLE_E}}', '{{MUELLE}}'] },
-            'flores': { id: "QxHk_3yzt3c", name: "Vals de las Flores", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] },
+            'flores': { id: "GC7PycSBILc", name: "Vals de las Flores", patterns: ['{{BUCLE_L}}', '{{OLAS}}', '{{BUCLE_L}}', '{{ARCH}}'] }, /* Enlace corregido */
             'primavera': { id: "l-dYNttdgl0", name: "La Primavera", patterns: ['{{BUCLE_L}}', '{{ROMBOS}}', '{{U_SHAPE}}', '{{BUCLE_L}}'] },
-            'tritsch': { id: "7uV3X8y1YEQ", name: "Tritsch-Tratsch Polka", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] },
-            'badinerie': { id: "xVxwT78V9gw", name: "Badinerie", patterns: ['{{BUCLE_E}}', '{{ROMBOS}}', '{{BUCLE_E}}', '{{ZIGZAG}}'] },
+            'tritsch': { id: "WqgL0f8m874", name: "Tritsch-Tratsch Polka", patterns: ['{{ESPIRAL}}', '{{BUCLE_E}}', '{{ESPIRAL}}', '{{ZIGZAG}}'] }, /* Enlace corregido */
+            'badinerie': { id: "klPZIGQcrHA", name: "Badinerie (Bach)", patterns: ['{{BUCLE_E}}', '{{ROMBOS}}', '{{BUCLE_E}}', '{{ZIGZAG}}'] }, /* Enlace corregido */
             'pizzicato': { id: "R_xrkenwf3I", name: "Pizzicato Polka", patterns: ['{{GUION}}', '{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}'] },
             'maquina': { id: "G4nX0Xrn-wo", name: "La Máquina de Escribir", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{CIRCLE}}', '{{GUION}}'] },
-            'plink': { id: "e1k3B2d5q5w", name: "Plink, Plank, Plunk", patterns: ['{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}', '{{VERT}}'] },
+            'plink': { id: "7N_9c2_F2Dk", name: "Plink, Plank, Plunk", patterns: ['{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}', '{{VERT}}'] }, /* Enlace corregido */
             'hada': { id: "Wz_f9B4pPtg", name: "Hada de Azúcar", patterns: ['{{CIRCLE}}', '{{U_SHAPE}}', '{{CIRCLE}}', '{{ARCH}}'] },
-            'popcorn': { id: "NjxwkZ1s7BA", name: "Popcorn", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] },
+            'popcorn': { id: "OSRCemf2JHc", name: "Popcorn", patterns: ['{{CIRCLE}}', '{{ZIGZAG}}', '{{CIRCLE}}', '{{ZIGZAG}}'] }, /* Enlace corregido */
             'rey_montana': { id: "kLp_Hh6DKWc", name: "Rey de la Montaña", patterns: ['{{CIRCLE}}', '{{GUION}}', '{{ZIGZAG}}', '{{ESPIRAL}}'] },
-            'pantera': { id: "jBupII3LH_Q", name: "Pantera Rosa", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] },
-            'elephant': { id: "b1z4J_dJ8d4", name: "Baby Elephant Walk", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] },
-            'esqueletos': { id: "z0glKOLU5iA", name: "Marcha Esqueletos", patterns: ['{{VERT}}', '{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}'] },
-            'fosiles': { id: "vJ0j3j7j_4g", name: "Fósiles", patterns: ['{{INCL}}', '{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}'] },
-            'hungara': { id: "3X9LvC9WkkQ", name: "Danza Húngara 5", patterns: ['{{OLAS}}', '{{ZIGZAG}}', '{{OLAS}}', '{{ZIGZAG}}'] },
+            'pantera': { id: "HhHwnrlZRus", name: "Pantera Rosa", patterns: ['{{GUION}}', '{{L_SHAPE}}', '{{GUION}}', '{{L_SHAPE}}'] }, /* Enlace corregido */
+            'elephant': { id: "qJO5_5i6h0w", name: "Baby Elephant Walk", patterns: ['{{ARCH}}', '{{GUION}}', '{{ARCH}}', '{{GUION}}'] }, /* Enlace corregido */
+            'esqueletos': { id: "YyO7SaFnk7Y", name: "Marcha Esqueletos", patterns: ['{{VERT}}', '{{CIRCLE}}', '{{VERT}}', '{{CIRCLE}}'] }, /* Enlace corregido */
+            'fosiles': { id: "HTq3XYp3ZMc", name: "Fósiles (Saint-Saëns)", patterns: ['{{INCL}}', '{{ZIGZAG}}', '{{INCL}}', '{{ZIGZAG}}'] }, /* Enlace corregido */
+            'hungara': { id: "3X9LvC9WkkQ", name: "Danza Húngara No. 5", patterns: ['{{OLAS}}', '{{ZIGZAG}}', '{{OLAS}}', '{{ZIGZAG}}'] },
             'cancan': { id: "4DNGMoMNLRY", name: "Can Can", patterns: ['{{VERT}}', '{{INCL}}', '{{VERT}}', '{{INCL}}'] },
             'gladiadores': { id: "_B0CyOAO8y0", name: "Entrada Gladiadores", patterns: ['{{ESPIRAL}}', '{{OLAS}}', '{{ESPIRAL}}', '{{OLAS}}'] }
         };
@@ -439,6 +441,7 @@
             modal: document.getElementById('pdfLoadingModal')
         };
 
+        // --- CÁLCULO DE CAPACIDAD DINÁMICA ---
         function calculateCapacity(currentSize, paperType) {
             const totalH = 1056; 
             const padH = 96; 
@@ -447,26 +450,27 @@
             const availableH = totalH - padH - headerH - footerH;
             
             let rowH = currentSize;
+            // Solo cuadrícula ajusta su altura de renglón a múltiplos de 20
             if (paperType === 'bg-grid') {
                 rowH = Math.max(20, Math.ceil(currentSize / 20) * 20);
-            } else if (paperType !== 'bg-blank') {
-                rowH = 60; // Fijo para pautas
-            }
+            } 
             return Math.floor(availableH / rowH);
         }
 
+        // RENDERIZADO
         function render() {
             saveState();
+            if(!els.sheet || !els.container) return;
 
             const paperType = els.paper.value;
             const isGrayscale = els.checkGrayscale.checked;
-            document.getElementById('sheet').className = `sheet shadow-2xl origin-top ${paperType} ${isGrayscale ? 'grayscale-mode' : ''}`;
+            els.sheet.className = `sheet shadow-2xl origin-top ${paperType} ${isGrayscale ? 'grayscale-mode' : ''}`;
             
             const sizeVal = parseInt(els.size.value);
             const pt = Math.round(sizeVal * 0.75);
-            els.sizeVal.textContent = `${sizeVal}px (≈${pt}pt)`;
-            els.weightVal.textContent = els.weight.value + 'x';
-            els.opacityVal.textContent = els.opacity.value + '%';
+            if(els.sizeVal) els.sizeVal.textContent = `${sizeVal}px (≈${pt}pt)`;
+            if(els.weightVal) els.weightVal.textContent = els.weight.value + 'x';
+            if(els.opacityVal) els.opacityVal.textContent = els.opacity.value + '%';
             
             if (els.checkHeader.checked) {
                 els.headerContainer.style.height = '25mm';
@@ -487,15 +491,15 @@
             els.container.innerHTML = '';
             const lines = els.input.value.split('\n');
             const fontClass = els.font.value;
-            const mode = document.querySelector('input[name="practiceMode"]:checked').value;
+            const practiceModeInput = document.querySelector('input[name="practiceMode"]:checked');
+            const mode = practiceModeInput ? practiceModeInput.value : 'simple';
             let usedLines = 0;
 
             let rowHeightPx = sizeVal;
+            // Solo cuadrícula tiene snapping
             if (paperType === 'bg-grid') {
                  rowHeightPx = Math.max(20, Math.ceil(sizeVal / 20) * 20);
-            } else if (paperType !== 'bg-blank') {
-                 rowHeightPx = 60; 
-            }
+            } 
 
             document.documentElement.style.setProperty('--row-h', rowHeightPx + 'px');
             document.documentElement.style.setProperty('--font-s', (sizeVal * 0.66) + 'px');
@@ -525,8 +529,10 @@
                 usedLines += cost;
             }
 
-            els.lineCounter.textContent = `${usedLines} / ${maxLinesDynamic}`;
-            els.lineCounter.className = usedLines >= maxLinesDynamic ? "text-xs font-mono font-bold text-red-400" : "text-xs font-mono font-bold text-green-400";
+            if(els.counter) {
+                els.counter.textContent = `${usedLines} / ${maxLinesDynamic}`;
+                els.counter.className = usedLines >= maxLinesDynamic ? "text-xs font-mono font-bold text-red-400" : "text-xs font-mono font-bold text-green-400";
+            }
         }
 
         function createRow(content, opacity, isPattern, color, fontClass) {
@@ -557,7 +563,7 @@
         }
 
         function downloadPDF() {
-            els.modal.style.display = 'flex';
+            if(els.modal) els.modal.style.display = 'flex';
             const element = document.getElementById('sheet');
             const opt = {
                 margin: 0,
@@ -567,21 +573,33 @@
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
             setTimeout(() => {
-                html2pdf().set(opt).from(element).save().then(() => { els.modal.style.display = 'none'; });
+                html2pdf().set(opt).from(element).save().then(() => { if(els.modal) els.modal.style.display = 'none'; });
             }, 100);
         }
 
         function fillPage(type) {
-            const max = calculateCapacity(parseInt(els.size.value), els.paper.value);
-            const mode = document.querySelector('input[name="practiceMode"]:checked').value;
-            const cost = mode === 'progressive' ? 3 : (mode === 'plana' ? 2 : 1);
-            const slots = Math.floor(max / cost);
-            let content = "";
-            let list = categories[type];
-            for(let i=0; i<slots; i++) {
-                content += list[i % list.length] + (i < slots-1 ? '\n' : '');
+            // Lógica aleatoria
+            if (type === 'random') {
+                const max = calculateCapacity(parseInt(els.size.value), els.paper.value);
+                const allItems = [...categories.mix, ...categories.texto, "0 1 2 3 4 5 6 7 8 9"];
+                let content = "";
+                for(let i=0; i<max; i++) {
+                     content += allItems[Math.floor(Math.random() * allItems.length)] + (i < max-1 ? '\n' : '');
+                }
+                els.input.value = content;
+            } else {
+                const max = calculateCapacity(parseInt(els.size.value), els.paper.value);
+                const mode = document.querySelector('input[name="practiceMode"]:checked').value;
+                const cost = mode === 'progressive' ? 3 : (mode === 'plana' ? 2 : 1);
+                const slots = Math.floor(max / cost);
+
+                let content = "";
+                let list = categories[type];
+                for(let i=0; i<slots; i++) {
+                    content += list[i % list.length] + (i < slots-1 ? '\n' : '');
+                }
+                els.input.value = content;
             }
-            els.input.value = content;
             render();
             if(window.innerWidth < 768) switchTab('preview');
         }
@@ -641,8 +659,9 @@
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 const bpm = parseInt(els.bpmInput.value) || 60;
+                const intervalMs = 60000 / bpm;
                 playClick();
-                metronomeInterval = setInterval(playClick, 60000 / bpm);
+                metronomeInterval = setInterval(playClick, intervalMs);
                 els.metroBtn.textContent = "⏹";
                 isMetronomeOn = true;
             }
@@ -661,11 +680,13 @@
             osc.stop(audioCtx.currentTime + 0.1);
         }
 
+        // Save/Load
         function saveState() {
+            const practiceModeInput = document.querySelector('input[name="practiceMode"]:checked');
             const state = {
                 text: els.input.value, size: els.size.value, opacity: els.opacity.value,
                 font: els.font.value, paper: els.paper.value, school: els.schoolInput.value,
-                student: els.studentInput.value, mode: document.querySelector('input[name="practiceMode"]:checked').value,
+                student: els.studentInput.value, mode: practiceModeInput ? practiceModeInput.value : 'simple',
                 color: selectedColor, showHeader: els.checkHeader.checked, grayscale: els.checkGrayscale.checked, weight: els.weight.value
             };
             localStorage.setItem('caligrafiaState', JSON.stringify(state));
@@ -683,7 +704,10 @@
                 if(state.student) els.studentInput.value = state.student;
                 if(state.color) selectedColor = state.color;
                 if(state.weight) els.weight.value = state.weight;
-                if(state.mode) document.querySelector(`input[name="practiceMode"][value="${state.mode}"]`).checked = true;
+                if(state.mode) {
+                     const radio = document.querySelector(`input[name="practiceMode"][value="${state.mode}"]`);
+                     if(radio) radio.checked = true;
+                }
                 if(state.showHeader !== undefined) els.checkHeader.checked = state.showHeader;
                 if(state.grayscale !== undefined) els.checkGrayscale.checked = state.grayscale;
             }
@@ -700,5 +724,3 @@
     </script>
 </body>
 </html>
-
-
